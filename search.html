@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索活动 - 慈善活动平台</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">慈善活动平台</h1>
+            <div class="nav-links">
+                <a href="home.html" class="nav-link">首页</a>
+                <a href="index.html" class="nav-link">所有活动</a>
+                <a href="search.html" class="nav-link active">搜索</a>
+                <a href="help.html" class="nav-link">帮助</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 独立搜索页面内容 -->
+    <section class="search-page">
+        <div class="container">
+            <h1>搜索活动</h1>
+            <p class="search-description">通过关键词和分类筛选您感兴趣的活动</p>
+            
+            <div class="search-controls">
+                <div class="search-input-group">
+                    <input type="text" id="searchKeyword" placeholder="输入活动名称、描述或地点..." class="search-input">
+                    <select id="searchCategory" class="search-select">
+                        <option value="">所有分类</option>
+                    </select>
+                    <button onclick="performSearch()" class="search-button">搜索</button>
+                    <button onclick="clearSearch()" class="clear-button">清除</button>
+                </div>
+            </div>
+
+            <!-- 搜索结果区域 -->
+            <div class="search-results">
+                <h2 id="resultsTitle">请输入搜索条件</h2>
+                <div id="searchResultsGrid" class="events-grid">
+                    <!-- 搜索结果将通过 JavaScript 动态加载 -->
+                </div>
+                <div id="noResults" class="no-results hidden">
+                    <p>没有找到匹配的活动</p>
+                    <p>请尝试其他搜索关键词或分类</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 加载提示 -->
+    <div id="loading" class="loading">加载中...</div>
+
+    <!-- JavaScript 文件 -->
+    <script src="search.js"></script>
+</body>
+</html>

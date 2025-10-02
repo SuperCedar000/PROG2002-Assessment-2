@@ -1,0 +1,25 @@
+{
+  "name": "prog2002-a2-charity-events",
+  "version": "1.0.0",
+  "description": "Charity Events Website for PROG2002 Assessment 2",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test-db": "node test_mysql.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0"
+  },
+  "keywords": [
+    "charity",
+    "events",
+    "website",
+    "nodejs",
+    "mysql"
+  ],
+  "author": "SuperCedar000",
+  "license": "MIT"
+}
