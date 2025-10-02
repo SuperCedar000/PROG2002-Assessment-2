@@ -1309,3 +1309,152 @@ body {
 .reset-filter-btn:hover {
     background: #545b62;
 }
+/* 快速导航区域背景样式 */
+.quick-navigation-section {
+    background: url('./images/events-nav-bg.jpg') center/cover;
+    color: white;
+    padding: 3rem 0;
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+}
+
+.quick-navigation-section .container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+/* 添加深色覆盖层确保文字可读性 */
+.quick-navigation-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* 调整透明度控制暗度 */
+    z-index: 1;
+}
+
+/* 快速导航内容样式 */
+.quick-nav-content {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 2.5rem;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.quick-nav-content h2 {
+    color: white;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.quick-nav-content p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.quick-nav-link {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s;
+    margin-bottom: 2rem;
+}
+
+.quick-nav-link:hover {
+    background: #764ba2;
+    color: white;
+    text-decoration: none;
+}
+
+/* 分类列表样式 */
+.categories-list {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+.categories-list li {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 1.1rem;
+}
+
+.categories-list li:last-child {
+    border-bottom: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .quick-navigation-section {
+        padding: 2rem 0;
+        min-height: auto;
+    }
+    
+    .quick-nav-content {
+        padding: 1.5rem;
+    }
+    
+    .quick-nav-content h2 {
+        font-size: 1.5rem;
+    }
+}
+/* 修改搜索区域背景为图片 */
+.search-section {
+    /* 备用背景色，如果图片加载失败会显示这个 */
+    background-color: #667eea;
+    
+    /* 背景图片 */
+    background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url('images/events-nav-bg.jpg');
+    
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: white;
+    padding: 4rem 0;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+/* 修改搜索按钮样式 */
+.nav-to-search-btn {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    font-weight: 500;
+}
+
+.nav-to-search-btn:hover {
+    background: #764ba2;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+/* 调整搜索框布局 */
+.search-section .search-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
