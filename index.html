@@ -35,14 +35,17 @@
     </section>
 
     <!-- 分类筛选 -->
-    <section id="categories" class="categories-section">
-        <div class="container">
+<section id="categories" class="categories-section">
+    <div class="container">
+        <div class="categories-header">
             <h2>活动分类</h2>
-            <div class="categories-grid" id="categoriesGrid">
-                <!-- 分类将通过 JavaScript 动态加载 -->
-            </div>
+            <button onclick="resetCategoryFilter()" class="reset-filter-btn">显示全部</button>
         </div>
-    </section>
+        <div class="categories-grid" id="categoriesGrid">
+            <!-- 分类将通过 JavaScript 动态加载 -->
+        </div>
+    </div>
+</section>
 
     <!-- 活动列表 -->
     <section id="events" class="events-section">

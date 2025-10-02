@@ -180,12 +180,49 @@ function viewEventDetails(eventId) {
 // 显示分类
 function displayCategories(categories) {
     const categoriesHTML = categories.map(category => `
-        <div class="category-card" onclick="filterByCategory('${category.name}')">
+        <div class="category-card" onclick="filterEventsByCategory('${category.name}')">
             <h3>${category.name}</h3>
         </div>
     `).join('');
 
     categoriesGrid.innerHTML = categoriesHTML;
+}
+
+// 按分类筛选活动
+async function filterEventsByCategory(categoryName) {
+    showLoading();
+    try {
+        console.log(`🏷️ 筛选分类: ${categoryName}`);
+        const response = await fetch(`${API_BASE_URL}/events`);
+        const data = await response.json();
+        
+        if (data.success) {
+            // 筛选指定分类的活动
+            const filteredEvents = data.data.filter(event => 
+                event.category_name === categoryName
+            );
+            
+            displayEvents(filteredEvents);
+            
+            // 更新页面标题显示筛选结果
+            const eventsTitle = document.querySelector('.events-section h2');
+            eventsTitle.textContent = `${categoryName} 分类 (${filteredEvents.length} 个活动)`;
+            
+            console.log(`✅ 筛选完成: ${filteredEvents.length} 个活动`);
+        }
+    } catch (error) {
+        console.error('❌ 筛选活动失败:', error);
+    } finally {
+        hideLoading();
+    }
+}
+
+// 重置筛选，显示所有活动
+function resetCategoryFilter() {
+    loadEvents();
+    const eventsTitle = document.querySelector('.events-section h2');
+    eventsTitle.textContent = '所有活动';
+    console.log('🔄 重置筛选，显示所有活动');
 }
 
 // 填充分类筛选下拉框
@@ -195,64 +232,6 @@ function populateCategoryFilter(categories) {
     `).join('');
 
     categoryFilter.innerHTML = '<option value="">所有分类</option>' + optionsHTML;
-}
-
-// 主页快速搜索功能
-async function searchEvents() {
-    const searchTerm = searchInput.value.trim();
-    const selectedCategory = categoryFilter.value;
-
-    if (!searchTerm && !selectedCategory) {
-        // 如果没有搜索条件，显示所有活动
-        loadEvents();
-        return;
-    }
-
-    showLoading();
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/events`);
-        const data = await response.json();
-        
-        if (data.success) {
-            let filteredEvents = data.data;
-
-            // 应用搜索条件
-            if (searchTerm) {
-                filteredEvents = filteredEvents.filter(event => 
-                    event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    event.description.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-            }
-
-            // 应用分类筛选
-            if (selectedCategory) {
-                filteredEvents = filteredEvents.filter(event => 
-                    event.category_name === selectedCategory
-                );
-            }
-
-            displayEvents(filteredEvents);
-            
-            // 更新页面标题显示搜索结果
-            const eventsTitle = document.querySelector('.events-section h2');
-            if (searchTerm || selectedCategory) {
-                eventsTitle.textContent = `搜索结果 (${filteredEvents.length} 个活动)`;
-            } else {
-                eventsTitle.textContent = '所有活动';
-            }
-        }
-    } catch (error) {
-        console.error('Error searching events:', error);
-    } finally {
-        hideLoading();
-    }
-}
-
-// 按分类筛选
-function filterByCategory(categoryName) {
-    categoryFilter.value = categoryName;
-    searchEvents();
 }
 
 // 工具函数
@@ -285,16 +264,6 @@ function showLoading() {
 function hideLoading() {
     loading.classList.add('hidden');
 }
-
-// 添加搜索输入框的键盘事件
-searchInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchEvents();
-    }
-});
-
-// 添加分类筛选的变化事件
-categoryFilter.addEventListener('change', searchEvents);
 
 // 重置搜索条件
 function resetSearch() {

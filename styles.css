@@ -1191,3 +1191,25 @@ body {
         font-size: 2.5rem;
     }
 }
+/* 分类区域头部样式 */
+.categories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.reset-filter-btn {
+    padding: 0.5rem 1rem;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+}
+
+.reset-filter-btn:hover {
+    background: #545b62;
+}

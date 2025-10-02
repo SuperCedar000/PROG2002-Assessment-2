@@ -91,6 +91,10 @@ async function insertSampleData() {
         // 确保使用正确的数据库
         await promisePool.query('USE charityevents_db');
         
+        // 清空现有数据，避免重复
+        console.log('🧹 清空现有活动数据...');
+        await promisePool.query('DELETE FROM events');
+        
         // 插入类别
         await promisePool.query(`
             INSERT IGNORE INTO categories (name) VALUES 
@@ -106,27 +110,26 @@ async function insertSampleData() {
             ('World Wildlife Fund', 'Conserving nature and wildlife', 'enquiries@wwf.org.au', '1800 032 551', 'https://www.wwf.org.au')
         `);
         
-        // 插入活动
+        // 插入活动（使用您修改后的8个活动）
         await promisePool.query(`
             INSERT IGNORE INTO events (name, description, event_date, event_time, location, category_id, organisation_id, goal_amount, current_amount, ticket_price, is_active) VALUES 
-            ('nNnc Fun Run 2025', 'Annual 5km fun run for cancer research', '2025-10-15', '08:00:00', 'Sydney Park, NSW', 1, 2, 50000.00, 32500.00, 25.00, TRUE),
-            ('Charity Gala Dinner', 'Elegant dinner to support wildlife conservation', '2025-11-20', '19:00:00', 'Hilton Hotel, Sydney', 2, 3, 75000.00, 45000.00, 150.00, TRUE),
-            ('Art Silent Auction', 'Auction of local artist works', '2025-09-30', '18:30:00', 'Art Gallery of NSW', 3, 1, 20000.00, 12000.00, 0.00, TRUE),
-            ('Hope Concert', 'Live music event for disaster relief', '2025-12-05', '20:00:00', 'Opera House, Sydney', 4, 1, 30000.00, 18000.00, 50.00, TRUE),
-            ('Winter Charity Ball', 'Formal ball supporting medical research', '2025-08-25', '19:30:00', 'Four Seasons Hotel', 5, 2, 60000.00, 35000.00, 120.00, TRUE),
-            ('Basketball Tournament', 'Community sports event for youth programs', '2025-10-10', '09:00:00', 'Sydney Sports Centre', 6, 1, 15000.00, 8000.00, 15.00, TRUE),
-            ('Summer Fun Run', '10km run along the coastline', '2025-01-20', '07:00:00', 'Bondi Beach, Sydney', 1, 2, 40000.00, 25000.00, 30.00, TRUE),
-            ('Classical Music Night', 'Orchestra performance for education funds', '2025-11-15', '19:00:00', 'City Recital Hall', 4, 3, 25000.00, 15000.00, 45.00, TRUE)
+            ('AxX Summer Fun Run', '10km run along the coastline', '2025-01-20', '07:00:00', 'Bondi Beach, Sydney', 1, 2, 40000.00, 25000.00, 30.00, TRUE),
+            ('Winter Charity Gala 2025', 'Formal ball supporting medical research', '2025-08-25', '19:30:00', 'Four Seasons Hotel', 5, 2, 60000.00, 35000.00, 120.00, TRUE),
+            ('Art & Culture Silent Auction', 'Auction of local artist works', '2025-09-30', '18:30:00', 'Art Gallery of NSW', 3, 1, 20000.00, 12000.00, 0.00, TRUE),
+            ('Hope Concert 2025', 'Live music event for disaster relief', '2025-12-05', '20:00:00', 'Opera House, Sydney', 4, 1, 30000.00, 18000.00, 50.00, TRUE),
+            ('AxX Sydney Marathon 2025', 'Annual 5km fun run for cancer research', '2025-10-15', '08:00:00', 'Sydney Park, NSW', 1, 2, 50000.00, 32500.00, 25.00, TRUE),
+            ('Community Basketball Tournament', 'Community sports event for youth programs', '2025-10-10', '09:00:00', 'Sydney Sports Centre', 6, 1, 15000.00, 8000.00, 15.00, TRUE),
+            ('Wildlife Conservation Gala', 'Elegant dinner to support wildlife conservation', '2025-11-20', '19:00:00', 'Hilton Hotel, Sydney', 2, 3, 75000.00, 45000.00, 150.00, TRUE),
+            ('Classical Music Festival', 'Orchestra performance for education funds', '2025-11-15', '19:00:00', 'City Recital Hall', 4, 3, 25000.00, 15000.00, 45.00, TRUE)
         `);
         
-        console.log('✅ Sample data inserted successfully');
+        console.log('✅ 样本数据插入成功');
         return true;
     } catch (error) {
         console.error('❌ Error inserting sample data:', error);
         return false;
     }
 }
-
 // 获取所有活动（用于首页）
 async function getAllEvents() {
     try {
