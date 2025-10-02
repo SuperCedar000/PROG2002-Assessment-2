@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // 导入数据库模块
-const db = require('./event_db_mysql');
+const db = require('./event_db');
 
 // 初始化数据库（应用启动时自动初始化）
 async function initializeApp() {
