@@ -537,10 +537,9 @@ body {
     text-decoration: underline;
 }
 
-/* 慈善组织介绍样式 - 带背景图片 */
+/* 慈善组织介绍样式 - 去除紫色覆盖 */
 .organisations-section {
-    background: linear-gradient(rgba(102, 126, 234, 0.85), rgba(118, 75, 162, 0.85)), 
-                url('/images/charity-bg.jpg') center/cover;
+    background: url('./images/charity-bg.jpg') center/cover;
     color: white;
     padding: 4rem 0;
     position: relative;
@@ -565,6 +564,39 @@ body {
     letter-spacing: 1px;
 }
 
+/* 组织卡片样式保持不变 */
+.organisations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.organisation-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.organisation-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffd700, #ff6b6b, #4ecdc4);
+}
+
+.organisation-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
 /* 组织卡片在背景图片上的样式优化 */
 .organisations-grid {
     display: grid;
