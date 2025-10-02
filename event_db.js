@@ -109,7 +109,7 @@ async function insertSampleData() {
         // 插入活动
         await promisePool.query(`
             INSERT IGNORE INTO events (name, description, event_date, event_time, location, category_id, organisation_id, goal_amount, current_amount, ticket_price, is_active) VALUES 
-            ('Sydney Fun Run 2025', 'Annual 5km fun run for cancer research', '2025-10-15', '08:00:00', 'Sydney Park, NSW', 1, 2, 50000.00, 32500.00, 25.00, TRUE),
+            ('nNnc Fun Run 2025', 'Annual 5km fun run for cancer research', '2025-10-15', '08:00:00', 'Sydney Park, NSW', 1, 2, 50000.00, 32500.00, 25.00, TRUE),
             ('Charity Gala Dinner', 'Elegant dinner to support wildlife conservation', '2025-11-20', '19:00:00', 'Hilton Hotel, Sydney', 2, 3, 75000.00, 45000.00, 150.00, TRUE),
             ('Art Silent Auction', 'Auction of local artist works', '2025-09-30', '18:30:00', 'Art Gallery of NSW', 3, 1, 20000.00, 12000.00, 0.00, TRUE),
             ('Hope Concert', 'Live music event for disaster relief', '2025-12-05', '20:00:00', 'Opera House, Sydney', 4, 1, 30000.00, 18000.00, 50.00, TRUE),
