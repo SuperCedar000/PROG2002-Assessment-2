@@ -5,6 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>帮助 - 慈善活动平台</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 帮助页面顶部背景图片 */
+        .help-hero-section {
+            background: url('./images/PICTURE3.jpg') center center / cover no-repeat;
+            min-height: 300px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+        }
+        .help-hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+        }
+        .help-hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+            color: white !important; /* 确保标题为白色 */
+        }
+        .help-hero-content .help-description {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 0;
+            color: white !important; /* 确保描述文字为白色 */
+        }
+        
+        /* 备用背景方案 - 如果图片不显示 */
+        .help-hero-section.fallback-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+        
+        /* 确保所有文字在背景板上都是白色 */
+        .help-hero-section * {
+            color: white !important;
+        }
+    </style>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -21,12 +61,19 @@
         </div>
     </nav>
 
+    <!-- 帮助页面顶部背景板 -->
+    <section class="help-hero-section" id="helpHero">
+        <div class="container">
+            <div class="help-hero-content">
+                <h1 style="color: white !important;">帮助中心</h1>
+                <p class="help-description" style="color: white !important;">欢迎使用慈善活动平台，以下是平台功能和使用指南</p>
+            </div>
+        </div>
+    </section>
+
     <!-- 帮助页面内容 -->
     <section class="help-section">
         <div class="container">
-            <h1>帮助中心</h1>
-            <p class="help-description">欢迎使用慈善活动平台，以下是平台功能和使用指南</p>
-            
             <!-- 导航功能说明 -->
             <div class="help-section-box">
                 <h2>📋 导航功能说明</h2>
@@ -165,6 +212,51 @@
     </section>
 
     <!-- JavaScript 文件 -->
-    <script src="help.js"></script>
+    <script>
+        // 图片加载失败时使用备用背景
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroSection = document.getElementById('helpHero');
+            const bgImage = new Image();
+            
+            bgImage.onload = function() {
+                console.log('背景图片加载成功');
+            };
+            
+            bgImage.onerror = function() {
+                console.log('背景图片加载失败，使用备用背景');
+                heroSection.classList.add('fallback-bg');
+                // 尝试其他可能的路径
+                const alternativePaths = [
+                    './PICTURE3.jpg',
+                    'images/PICTURE3.jpg',
+                    './images/PICTURE3.jpg',
+                    'PICTURE3.jpg'
+                ];
+                
+                let currentIndex = 0;
+                function tryNextPath() {
+                    if (currentIndex < alternativePaths.length) {
+                        const path = alternativePaths[currentIndex];
+                        console.log('尝试路径:', path);
+                        heroSection.style.backgroundImage = `url('${path}')`;
+                        currentIndex++;
+                        
+                        // 测试新路径是否有效
+                        const testImg = new Image();
+                        testImg.onload = function() {
+                            console.log('找到有效路径:', path);
+                            heroSection.classList.remove('fallback-bg');
+                        };
+                        testImg.onerror = tryNextPath;
+                        testImg.src = path;
+                    }
+                }
+                
+                tryNextPath();
+            };
+            
+            bgImage.src = './images/PICTURE3.jpg';
+        });
+    </script>
 </body>
 </html>

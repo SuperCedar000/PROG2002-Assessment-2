@@ -5,6 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>所有活动 - 慈善活动平台</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 自定义搜索区域背景图片 */
+        .search-section-custom {
+            background: url('./images/PICTURE2.jpg') center center / cover no-repeat !important;
+            min-height: 400px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 4rem 0;
+        }
+        .search-section-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+        .search-section-custom .container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* 确保文字在背景图片上清晰可见 */
+        .search-section-custom h2,
+        .search-section-custom p,
+        .search-section-custom a {
+            color: white !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+        }
+        
+        /* 备用背景方案 */
+        .search-section-custom.fallback-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+    </style>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -23,31 +61,30 @@
         </div>
     </nav>
 
-    <!-- 修改后的搜索区域 - 只保留跳转功能 -->
-    <section id="search" class="search-section">
+    <!-- 修改后的搜索区域 - 使用 PICTURE2 作为背景 -->
+    <section id="search" class="search-section-custom" id="quickNavSection">
         <div class="container">
-            <h2>快速导航</h2>
-            <div class="search-box">
-                <p class="quick-search-note">想要更精确地查找活动？</p>
-                <a href="search.html" class="nav-to-search-btn">前往搜索页面</a>
+            <h2 style="color: white; text-align: center; margin-bottom: 1.5rem; font-size: 2.5rem; font-weight: 300; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);">快速导航</h2>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+                <p style="color: rgba(255, 255, 255, 0.95); font-size: 1.2rem; margin-bottom: 0; text-align: center; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);">想要更精确地查找活动？</p>
+                <a href="search.html" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">前往搜索页面</a>
             </div>
         </div>
     </section>
 
-    <!-- 分类筛选 -->
-<section id="categories" class="categories-section">
-    <div class="container">
-        <div class="categories-header">
-            <h2>活动分类</h2>
-            <button onclick="resetCategoryFilter()" class="reset-filter-btn">显示全部</button>
+    <!-- 其余部分保持不变 -->
+    <section id="categories" class="categories-section">
+        <div class="container">
+            <div class="categories-header">
+                <h2>活动分类</h2>
+                <button onclick="resetCategoryFilter()" class="reset-filter-btn">显示全部</button>
+            </div>
+            <div class="categories-grid" id="categoriesGrid">
+                <!-- 分类将通过 JavaScript 动态加载 -->
+            </div>
         </div>
-        <div class="categories-grid" id="categoriesGrid">
-            <!-- 分类将通过 JavaScript 动态加载 -->
-        </div>
-    </div>
-</section>
+    </section>
 
-    <!-- 活动列表 -->
     <section id="events" class="events-section">
         <div class="container">
             <h2>所有活动</h2>
@@ -57,10 +94,56 @@
         </div>
     </section>
 
-    <!-- 加载提示 -->
     <div id="loading" class="loading">加载中...</div>
 
-    <!-- JavaScript 文件 -->
+    <script>
+        // 图片加载失败时使用备用背景
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickNavSection = document.getElementById('quickNavSection');
+            const bgImage = new Image();
+            
+            bgImage.onload = function() {
+                console.log('PICTURE2 背景图片加载成功');
+            };
+            
+            bgImage.onerror = function() {
+                console.log('PICTURE2 背景图片加载失败，使用备用背景');
+                quickNavSection.classList.add('fallback-bg');
+                // 尝试其他可能的路径
+                const alternativePaths = [
+                    './PICTURE2.jpg',
+                    'images/PICTURE2.jpg',
+                    './images/PICTURE2.jpg',
+                    'PICTURE2.jpg',
+                    './images/PICTURE2.jpeg',
+                    './images/PICTURE2.png'
+                ];
+                
+                let currentIndex = 0;
+                function tryNextPath() {
+                    if (currentIndex < alternativePaths.length) {
+                        const path = alternativePaths[currentIndex];
+                        console.log('尝试路径:', path);
+                        quickNavSection.style.backgroundImage = `url('${path}')`;
+                        currentIndex++;
+                        
+                        // 测试新路径是否有效
+                        const testImg = new Image();
+                        testImg.onload = function() {
+                            console.log('找到有效路径:', path);
+                            quickNavSection.classList.remove('fallback-bg');
+                        };
+                        testImg.onerror = tryNextPath;
+                        testImg.src = path;
+                    }
+                }
+                
+                tryNextPath();
+            };
+            
+            bgImage.src = './images/PICTURE2.jpg';
+        });
+    </script>
     <script src="app.js"></script>
 </body>
 </html>
