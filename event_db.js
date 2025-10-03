@@ -64,7 +64,7 @@ async function initializeDatabase() {
         `);
         console.log('✅ Organisations表创建成功');
         
-        // 创建events表 - 添加 is_paused 字段
+        // 创建events表
         await promisePool.query(`
             CREATE TABLE IF NOT EXISTS events (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -79,7 +79,6 @@ async function initializeDatabase() {
                 current_amount DECIMAL(10,2) DEFAULT 0.00,
                 ticket_price DECIMAL(8,2) DEFAULT 0.00,
                 is_active BOOLEAN DEFAULT TRUE,
-                is_paused BOOLEAN DEFAULT FALSE,  -- 新增暂停字段
                 image_url VARCHAR(500),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (category_id) REFERENCES categories(id),
@@ -96,7 +95,7 @@ async function initializeDatabase() {
     }
 }
 
-// 插入样本数据 - 修复版本
+// 插入样本数据 - 修复版本（包含11个活动，其中有Charity Ball分类）
 async function insertSampleData() {
     try {
         // 确保使用正确的数据库
@@ -142,7 +141,8 @@ async function insertSampleData() {
         await promisePool.query('DELETE FROM events');
         await promisePool.query('ALTER TABLE events AUTO_INCREMENT = 1');
         
-        // 插入活动数据 - 包含Charity Ball分类
+        // 插入活动 - 包含11个活动，其中有Charity Ball分类
+        console.log('🎪 插入活动数据...');
         const [eventResult] = await promisePool.query(`
             INSERT INTO events (name, description, event_date, event_time, location, category_id, organisation_id, goal_amount, current_amount, ticket_price, is_active) VALUES 
             ('Summer Fun Run', '10km coastal run for ocean conservation', '2025-01-20', '07:00:00', 'Bondi Beach, Sydney', 1, 2, 40000.00, 25000.00, 30.00, 1),
@@ -153,10 +153,11 @@ async function insertSampleData() {
             ('Community Basketball Tournament', 'Youth sports event for education programs', '2025-10-10', '09:00:00', 'Sydney Sports Centre', 6, 1, 15000.00, 8000.00, 15.00, 1),
             ('Wildlife Conservation Gala', 'Exclusive dinner for wildlife protection', '2025-11-20', '19:00:00', 'Hilton Hotel, Sydney', 2, 3, 75000.00, 45000.00, 150.00, 1),
             ('Classical Music Festival', 'Symphony orchestra for education funds', '2025-11-15', '19:00:00', 'City Recital Hall', 4, 3, 25000.00, 15000.00, 45.00, 1),
-            ('Spring Charity Ball', 'Elegant spring ball supporting arts education programs', '2025-05-20', '19:00:00', 'Sydney Opera House', 5, 1, 55000.00, 28000.00, 125.00, 1),  -- Charity Ball分类
+            ('Spring Charity Ball', 'Elegant spring ball supporting arts education programs', '2025-05-20', '19:00:00', 'Sydney Opera House', 5, 1, 55000.00, 28000.00, 125.00, 1),
             ('Annual Charity Auction', 'Live auction with celebrity hosts for children education', '2025-06-20', '18:00:00', 'Sydney Convention Centre', 3, 1, 45000.00, 22000.00, 0.00, 1),
             ('Jazz Night for Hope', 'An evening of jazz music supporting mental health awareness', '2025-07-12', '19:30:00', 'The Basement, Sydney', 4, 2, 18000.00, 9500.00, 35.00, 1)
         `);
+        
         console.log(`✅ 活动数据插入完成，影响行数: ${eventResult.affectedRows}`);
         
         // 验证插入的数据
@@ -165,7 +166,7 @@ async function insertSampleData() {
         
         // 显示插入的活动详情
         const [eventDetails] = await promisePool.query(`
-            SELECT e.id, e.name, c.name as category, o.name as organisation, e.is_active 
+            SELECT e.id, e.name, c.name as category, o.name as organisation 
             FROM events e 
             LEFT JOIN categories c ON e.category_id = c.id 
             LEFT JOIN organisations o ON e.organisation_id = o.id
@@ -173,7 +174,7 @@ async function insertSampleData() {
         
         console.log('📋 插入的活动列表:');
         eventDetails.forEach(event => {
-            console.log(`   - ID: ${event.id}, 名称: ${event.name}, 分类: ${event.category}, 组织: ${event.organisation}, 活跃: ${event.is_active}`);
+            console.log(`   - ID: ${event.id}, 名称: ${event.name}, 分类: ${event.category}, 组织: ${event.organisation}`);
         });
         
         console.log('🎉 样本数据插入成功！');
@@ -187,7 +188,7 @@ async function insertSampleData() {
     }
 }
 
-// 获取所有活动（用于首页）- 排除暂停的活动
+// 获取所有活动（用于首页）- 修复版本：移除 is_active 条件
 async function getAllEvents() {
     try {
         const [rows] = await promisePool.query(`
@@ -195,7 +196,6 @@ async function getAllEvents() {
             FROM events e 
             LEFT JOIN categories c ON e.category_id = c.id 
             LEFT JOIN organisations o ON e.organisation_id = o.id 
-            WHERE e.is_paused = FALSE  -- 排除暂停的活动
             ORDER BY e.event_date ASC
         `);
         console.log(`🔍 getAllEvents查询返回 ${rows.length} 条记录`);
@@ -225,7 +225,7 @@ async function getEventById(id) {
     }
 }
 
-// 搜索活动 - 排除暂停的活动
+// 搜索活动
 async function searchEvents(category = null, location = null, date = null) {
     try {
         let query = `
@@ -233,7 +233,7 @@ async function searchEvents(category = null, location = null, date = null) {
             FROM events e 
             LEFT JOIN categories c ON e.category_id = c.id 
             LEFT JOIN organisations o ON e.organisation_id = o.id 
-            WHERE e.is_paused = FALSE  -- 排除暂停的活动
+            WHERE 1=1
         `;
         const params = [];
 
@@ -296,6 +296,31 @@ async function forceReinitializeData() {
     }
 }
 
+// 调试函数 - 检查数据库状态
+async function getDatabaseStats() {
+    try {
+        const [eventsCount] = await promisePool.query('SELECT COUNT(*) as count FROM events');
+        const [categoriesCount] = await promisePool.query('SELECT COUNT(*) as count FROM categories');
+        const [orgsCount] = await promisePool.query('SELECT COUNT(*) as count FROM organisations');
+        
+        const [events] = await promisePool.query(`
+            SELECT e.id, e.name, e.is_active, c.name as category, o.name as organisation 
+            FROM events e 
+            LEFT JOIN categories c ON e.category_id = c.id 
+            LEFT JOIN organisations o ON e.organisation_id = o.id
+        `);
+        
+        return {
+            events_count: eventsCount[0].count,
+            categories_count: categoriesCount[0].count,
+            organisations_count: orgsCount[0].count,
+            events_details: events
+        };
+    } catch (error) {
+        throw error;
+    }
+}
+
 // 初始化应用函数
 async function initializeApp() {
     console.log('\n🔧 开始初始化应用...');
@@ -329,81 +354,6 @@ async function initializeApp() {
     return true;
 }
 
-// 调试函数 - 检查数据库状态
-async function getDatabaseStats() {
-    try {
-        const [eventsCount] = await promisePool.query('SELECT COUNT(*) as count FROM events');
-        const [categoriesCount] = await promisePool.query('SELECT COUNT(*) as count FROM categories');
-        const [orgsCount] = await promisePool.query('SELECT COUNT(*) as count FROM organisations');
-        
-        const [events] = await promisePool.query(`
-            SELECT e.id, e.name, e.is_active, c.name as category, o.name as organisation 
-            FROM events e 
-            LEFT JOIN categories c ON e.category_id = c.id 
-            LEFT JOIN organisations o ON e.organisation_id = o.id
-        `);
-        
-        return {
-            events_count: eventsCount[0].count,
-            categories_count: categoriesCount[0].count,
-            organisations_count: orgsCount[0].count,
-            events_details: events
-        };
-    } catch (error) {
-        throw error;
-    }
-}
-
-// ==================== 暂停功能相关方法 ====================
-
-// 暂停活动
-async function pauseEvent(eventId) {
-    try {
-        const [result] = await promisePool.query(
-            'UPDATE events SET is_paused = TRUE WHERE id = ?', 
-            [eventId]
-        );
-        console.log(`✅ 活动 ${eventId} 已暂停`);
-        return result;
-    } catch (error) {
-        console.error('❌ 暂停活动失败:', error);
-        throw error;
-    }
-}
-
-// 恢复活动
-async function resumeEvent(eventId) {
-    try {
-        const [result] = await promisePool.query(
-            'UPDATE events SET is_paused = FALSE WHERE id = ?', 
-            [eventId]
-        );
-        console.log(`✅ 活动 ${eventId} 已恢复`);
-        return result;
-    } catch (error) {
-        console.error('❌ 恢复活动失败:', error);
-        throw error;
-    }
-}
-
-// 获取暂停的活动
-async function getPausedEvents() {
-    try {
-        const [rows] = await promisePool.query(`
-            SELECT e.*, c.name as category_name, o.name as organisation_name 
-            FROM events e 
-            LEFT JOIN categories c ON e.category_id = c.id 
-            LEFT JOIN organisations o ON e.organisation_id = o.id 
-            WHERE e.is_paused = TRUE
-            ORDER BY e.event_date ASC
-        `);
-        return rows;
-    } catch (error) {
-        console.error('❌ 获取暂停活动失败:', error);
-        throw error;
-    }
-}
-
 module.exports = {
     pool: promisePool,
     testConnection,
@@ -415,9 +365,5 @@ module.exports = {
     getAllCategories,
     initializeApp,
     forceReinitializeData,
-    getDatabaseStats,
-    // 新增的函数
-    pauseEvent,
-    resumeEvent,
-    getPausedEvents
+    getDatabaseStats
 };

@@ -176,72 +176,6 @@ app.get('/api/events/search', async (req, res) => {
         });
     }
 });
-// ==================== 活动管理 API ====================
-
-// 暂停活动
-app.post('/api/events/:id/pause', async (req, res) => {
-    try {
-        const eventId = parseInt(req.params.id);
-        console.log(`⏸️  请求暂停活动 ID: ${eventId}`);
-        
-        await db.pauseEvent(eventId);
-        
-        res.json({ 
-            success: true, 
-            message: '活动已暂停',
-            eventId: eventId
-        });
-    } catch (error) {
-        console.error('❌ 暂停活动失败:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to pause event: ' + error.message
-        });
-    }
-});
-
-// 恢复活动
-app.post('/api/events/:id/resume', async (req, res) => {
-    try {
-        const eventId = parseInt(req.params.id);
-        console.log(`▶️  请求恢复活动 ID: ${eventId}`);
-        
-        await db.resumeEvent(eventId);
-        
-        res.json({ 
-            success: true, 
-            message: '活动已恢复',
-            eventId: eventId
-        });
-    } catch (error) {
-        console.error('❌ 恢复活动失败:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to resume event: ' + error.message
-        });
-    }
-});
-
-// 获取暂停的活动
-app.get('/api/events/paused', async (req, res) => {
-    try {
-        console.log('📨 接收到获取暂停活动请求');
-        const events = await db.getPausedEvents();
-        console.log(`✅ 从数据库获取到 ${events.length} 个暂停活动`);
-        
-        res.json({
-            success: true,
-            count: events.length,
-            data: events
-        });
-    } catch (error) {
-        console.error('❌ 获取暂停活动失败:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch paused events: ' + error.message
-        });
-    }
-});
 
 // ==================== 前端页面路由配置 ====================
 
@@ -312,12 +246,12 @@ async function startServer() {
             console.log(`   GET  http://localhost:${PORT}/api/categories`);
             console.log(`   GET  http://localhost:${PORT}/api/events/:id`);
             console.log(`   GET  http://localhost:${PORT}/api/events/search`);
-            console.log(`   GET  http://localhost:${PORT}/debug-db`); // 新增调试路由
+            console.log(`   GET  http://localhost:${PORT}/debug-db`);
             console.log('\n🌐 前端页面:');
             console.log(`   🏠 首页:     http://localhost:${PORT}/home`);
             console.log(`   📋 所有活动: http://localhost:${PORT}/`);
-            console.log(`   🔍 搜索页:   http://localhost:${PORT}/search`);
-            console.log(`   ❓ 帮助页:   http://localhost:${PORT}/help`);
+            console.log(`   🔍 搜索页:   http://localhost:3000/search`);
+            console.log(`   ❓ 帮助页:   http://localhost:3000/help`);
             console.log('\n💡 提示: 请通过上面的HTTP地址访问应用');
             console.log('=====================================\n');
         });

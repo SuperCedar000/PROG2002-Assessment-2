@@ -62,6 +62,43 @@
                 max-width: 1200px;
             }
         }
+
+        /* 添加加载样式确保存在 */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+
+        .error-message {
+            background: #ffe6e6;
+            border: 1px solid #ffcccc;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .retry-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .retry-button:hover {
+            background: #5a6fd8;
+        }
     </style>
 </head>
 <body>
@@ -81,8 +118,8 @@
         </div>
     </nav>
 
-    <!-- 修改后的搜索区域 - 使用 PICTURE2 作为背景，宽度增加30% -->
-    <section id="search" class="search-section-custom" id="quickNavSection">
+    <!-- 修复：移除重复的id属性 -->
+    <section class="search-section-custom" id="quickNavSection">
         <div class="container">
             <h2 style="color: white; text-align: center; margin-bottom: 1.5rem; font-size: 2.5rem; font-weight: 300; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);">快速导航</h2>
             <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
@@ -92,29 +129,20 @@
         </div>
     </section>
 
-    <!-- 其余部分保持不变 -->
-    <section id="categories" class="categories-section">
-        <div class="container">
-            <div class="categories-header">
-                <h2>活动分类</h2>
-                <button onclick="resetCategoryFilter()" class="reset-filter-btn">显示全部</button>
-            </div>
-            <div class="categories-grid" id="categoriesGrid">
-                <!-- 分类将通过 JavaScript 动态加载 -->
-            </div>
-        </div>
-    </section>
-
+   
+    <!-- 活动部分 -->
     <section id="events" class="events-section">
         <div class="container">
             <h2>所有活动</h2>
             <div class="events-grid" id="eventsGrid">
                 <!-- 活动将通过 JavaScript 动态加载 -->
+                <div class="loading-placeholder">加载活动中...</div>
             </div>
         </div>
     </section>
 
-    <div id="loading" class="loading">加载中...</div>
+    <!-- 加载指示器 -->
+    <div id="loading" class="loading hidden">加载中...</div>
 
     <script>
         // 图片加载失败时使用备用背景
@@ -162,6 +190,12 @@
             };
             
             bgImage.src = './images/PICTURE2.jpg';
+
+            // 调试信息
+            console.log('DOM加载完成，开始初始化应用...');
+            console.log('eventsGrid:', document.getElementById('eventsGrid'));
+            console.log('categoriesGrid:', document.getElementById('categoriesGrid'));
+            console.log('loading:', document.getElementById('loading'));
         });
     </script>
     <script src="app.js"></script>

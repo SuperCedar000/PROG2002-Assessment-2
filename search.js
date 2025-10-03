@@ -266,12 +266,26 @@ function toggleEventDetails(eventId) {
     }
 }
 
-// 查看活动详情
+// 查看活动详情 - 修复版
 function viewEventDetails(eventId) {
-    // 阻止事件冒泡，避免触发toggleEventDetails
-    event.stopPropagation();
+    // 安全地阻止事件冒泡
+    const clickEvent = window.event || arguments[0];
+    if (clickEvent) {
+        clickEvent.stopPropagation();
+        clickEvent.preventDefault();
+    }
     
+    // 验证eventId
+    if (isNaN(eventId) || eventId <= 0) {
+        console.error('❌ 无效的活动ID:', eventId);
+        alert('无效的活动ID');
+        return false;
+    }
+    
+    console.log(`查看活动详情: ${eventId}`);
     alert(`查看活动详情 ID: ${eventId}\n\n在实际应用中，这里会显示活动的完整信息、注册表单等。`);
+    
+    return false;
 }
 
 // 显示错误信息

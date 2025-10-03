@@ -188,7 +188,7 @@ function displayCategories(categories) {
     categoriesGrid.innerHTML = categoriesHTML;
 }
 
-// 按分类筛选活动
+// 按分类筛选活动 - 修复版本：使用搜索API
 async function filterEventsByCategory(categoryName) {
     showLoading();
     try {
@@ -206,13 +206,18 @@ async function filterEventsByCategory(categoryName) {
             eventsTitle.textContent = `${categoryName} 分类 (${data.data.length} 个活动)`;
             
             console.log(`✅ 筛选完成: ${data.data.length} 个活动`);
+        } else {
+            console.error('❌ API返回失败');
+            displayEvents([]);
         }
     } catch (error) {
         console.error('❌ 筛选活动失败:', error);
+        displayEvents([]);
     } finally {
         hideLoading();
     }
 }
+
 // 重置筛选，显示所有活动
 function resetCategoryFilter() {
     loadEvents();
