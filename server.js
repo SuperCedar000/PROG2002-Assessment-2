@@ -24,8 +24,7 @@ async function initializeApp() {
         // 测试数据库连接
         const connectionTest = await db.testConnection();
         if (!connectionTest) {
-            console.error('❌ 数据库连接失败，请确保MySQL服务正在运行');
-            process.exit(1);
+            throw new Error('数据库连接失败，请确保MySQL服务正在运行');
         }
         
         // 初始化数据库结构
@@ -35,10 +34,52 @@ async function initializeApp() {
         await db.insertSampleData();
         
         console.log('✅ 应用初始化完成');
+        return true;
     } catch (error) {
-        console.error('❌ 应用初始化失败:', error);
+        console.error('❌ 应用初始化失败:', error.message);
+        console.log('\n💡 解决方案:');
+        console.log('   1. 确保MySQL服务正在运行');
+        console.log('   2. 检查event_db.js中的数据库配置');
+        console.log('   3. 尝试重启MySQL服务');
+        throw error;
     }
 }
+
+// ==================== API 路由 ====================
+
+// 调试路由 - 检查数据库状态
+app.get('/debug-db', async (req, res) => {
+    try {
+        console.log('🔧 接收到调试请求');
+        const db = require('./event_db');
+        
+        const stats = await db.getDatabaseStats();
+        const allEvents = await db.getAllEvents();
+        
+        res.json({
+            success: true,
+            database_status: "connected",
+            tables: {
+                events: stats.events_count,
+                categories: stats.categories_count,
+                organisations: stats.organisations_count
+            },
+            events_details: stats.events_details,
+            getAllEvents_result: {
+                count: allEvents.length,
+                sample_data: allEvents.slice(0, 3) // 只显示前3个作为样本
+            },
+            message: stats.events_count === 0 ? "警告: 活动表为空!" : 
+                     allEvents.length === 0 ? "警告: getAllEvents返回空数组!" : "数据正常"
+        });
+    } catch (error) {
+        console.error('❌ 调试路由错误:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
 
 // API 路由 - 获取所有活动
 app.get('/api/events', async (req, res) => {
@@ -104,10 +145,10 @@ app.get('/api/events/:id', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Error fetching event:', error);
+        console.error('❌ 获取活动详情失败:', error);
         res.status(500).json({
             success: false,
-            message: 'Failed to fetch event'
+            message: 'Failed to fetch event: ' + error.message
         });
     }
 });
@@ -115,27 +156,10 @@ app.get('/api/events/:id', async (req, res) => {
 // API 路由 - 搜索活动
 app.get('/api/events/search', async (req, res) => {
     try {
-        const { q, category, location, date } = req.query;
-        console.log('🔍 搜索请求参数:', { q, category, location, date });
+        const { category, location, date } = req.query;
+        console.log('🔍 搜索请求参数:', { category, location, date });
         
-        let events = [];
-        
-        // 如果有具体的搜索条件，使用数据库搜索功能
-        if (category || location || date) {
-            events = await db.searchEvents(category, location, date);
-        } else {
-            // 否则获取所有活动
-            events = await db.getAllEvents();
-        }
-        
-        // 如果有关键词，在前端进一步筛选
-        if (q) {
-            events = events.filter(event => 
-                event.name.toLowerCase().includes(q.toLowerCase()) ||
-                event.description.toLowerCase().includes(q.toLowerCase()) ||
-                event.location.toLowerCase().includes(q.toLowerCase())
-            );
-        }
+        const events = await db.searchEvents(category, location, date);
         
         console.log(`✅ 搜索返回 ${events.length} 个活动`);
         res.json({
@@ -149,6 +173,72 @@ app.get('/api/events/search', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to search events: ' + error.message
+        });
+    }
+});
+// ==================== 活动管理 API ====================
+
+// 暂停活动
+app.post('/api/events/:id/pause', async (req, res) => {
+    try {
+        const eventId = parseInt(req.params.id);
+        console.log(`⏸️  请求暂停活动 ID: ${eventId}`);
+        
+        await db.pauseEvent(eventId);
+        
+        res.json({ 
+            success: true, 
+            message: '活动已暂停',
+            eventId: eventId
+        });
+    } catch (error) {
+        console.error('❌ 暂停活动失败:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to pause event: ' + error.message
+        });
+    }
+});
+
+// 恢复活动
+app.post('/api/events/:id/resume', async (req, res) => {
+    try {
+        const eventId = parseInt(req.params.id);
+        console.log(`▶️  请求恢复活动 ID: ${eventId}`);
+        
+        await db.resumeEvent(eventId);
+        
+        res.json({ 
+            success: true, 
+            message: '活动已恢复',
+            eventId: eventId
+        });
+    } catch (error) {
+        console.error('❌ 恢复活动失败:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to resume event: ' + error.message
+        });
+    }
+});
+
+// 获取暂停的活动
+app.get('/api/events/paused', async (req, res) => {
+    try {
+        console.log('📨 接收到获取暂停活动请求');
+        const events = await db.getPausedEvents();
+        console.log(`✅ 从数据库获取到 ${events.length} 个暂停活动`);
+        
+        res.json({
+            success: true,
+            count: events.length,
+            data: events
+        });
+    } catch (error) {
+        console.error('❌ 获取暂停活动失败:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch paused events: ' + error.message
         });
     }
 });
@@ -172,6 +262,7 @@ app.get('/search', (req, res) => {
     console.log('🔍 请求搜索页面');
     res.sendFile(path.join(__dirname, 'search.html'));
 });
+
 app.get('/help', (req, res) => {
     console.log('❓ 请求帮助页面');
     res.sendFile(path.join(__dirname, 'help.html'));
@@ -200,7 +291,7 @@ app.use((error, req, res, next) => {
     console.error('🚨 服务器错误:', error);
     res.status(500).json({
         success: false,
-        message: 'Internal server error'
+        message: 'Internal server error: ' + error.message
     });
 });
 
@@ -208,30 +299,39 @@ app.use((error, req, res, next) => {
 
 // 启动服务器
 async function startServer() {
-    // 先初始化应用
-    await initializeApp();
-    
-    // 然后启动服务器
-    app.listen(PORT, () => {
-        console.log(`\n🎉 ========== 服务器启动成功 ==========`);
-        console.log(`🚀 服务器运行在: http://localhost:${PORT}`);
-        console.log('\n📊 API 端点:');
-        console.log(`   GET  http://localhost:${PORT}/api/events`);
-        console.log(`   GET  http://localhost:${PORT}/api/categories`);
-        console.log(`   GET  http://localhost:${PORT}/api/events/:id`);
-        console.log(`   GET  http://localhost:${PORT}/api/events/search`);
-        console.log('\n🌐 前端页面:');
-        console.log(`   🏠 首页:     http://localhost:${PORT}/home`);
-        console.log(`   📋 所有活动: http://localhost:${PORT}/`);
-        console.log(`   🔍 搜索页:   http://localhost:${PORT}/search`);
-        console.log(`   ❓ 帮助页:   http://localhost:${PORT}/help`);
-        console.log('\n💡 提示: 请通过上面的HTTP地址访问应用');
-        console.log('=====================================\n');
-    });
+    try {
+        // 先初始化应用
+        await initializeApp();
+        
+        // 然后启动服务器
+        app.listen(PORT, () => {
+            console.log(`\n🎉 ========== 服务器启动成功 ==========`);
+            console.log(`🚀 服务器运行在: http://localhost:${PORT}`);
+            console.log('\n📊 API 端点:');
+            console.log(`   GET  http://localhost:${PORT}/api/events`);
+            console.log(`   GET  http://localhost:${PORT}/api/categories`);
+            console.log(`   GET  http://localhost:${PORT}/api/events/:id`);
+            console.log(`   GET  http://localhost:${PORT}/api/events/search`);
+            console.log(`   GET  http://localhost:${PORT}/debug-db`); // 新增调试路由
+            console.log('\n🌐 前端页面:');
+            console.log(`   🏠 首页:     http://localhost:${PORT}/home`);
+            console.log(`   📋 所有活动: http://localhost:${PORT}/`);
+            console.log(`   🔍 搜索页:   http://localhost:${PORT}/search`);
+            console.log(`   ❓ 帮助页:   http://localhost:${PORT}/help`);
+            console.log('\n💡 提示: 请通过上面的HTTP地址访问应用');
+            console.log('=====================================\n');
+        });
+        
+    } catch (error) {
+        console.error('\n❌ 服务器启动失败:', error.message);
+        console.log('\n🔧 故障排除步骤:');
+        console.log('   1. 确保MySQL服务正在运行');
+        console.log('   2. 检查数据库用户名和密码');
+        console.log('   3. 尝试重启MySQL服务');
+        console.log('   4. 检查端口3000是否被占用');
+        process.exit(1);
+    }
 }
 
 // 启动应用
-startServer().catch(error => {
-    console.error('❌ 服务器启动失败:', error);
-    process.exit(1);
-});
+startServer();

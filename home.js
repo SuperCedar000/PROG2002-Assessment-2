@@ -241,3 +241,154 @@ function hideLoading() {
     loading.classList.add('hidden');
     console.log('✅ 隐藏加载中');
 }
+// 在 home.js 文件末尾添加这些函数
+
+// 加载活动管理面板
+async function loadEventManagement() {
+    try {
+        console.log('🔄 加载活动管理面板...');
+        
+        // 获取所有活动（不包括暂停的）
+        const activeResponse = await fetch('/api/events');
+        const activeData = await activeResponse.json();
+        
+        // 获取暂停的活动
+        const pausedResponse = await fetch('/api/events/paused');
+        const pausedData = await pausedResponse.json();
+        
+        if (activeData.success && pausedData.success) {
+            displayActiveEvents(activeData.data);
+            displayPausedEvents(pausedData.data);
+        }
+    } catch (error) {
+        console.error('❌ 加载活动管理失败:', error);
+    }
+}
+
+// 显示活动列表
+function displayActiveEvents(events) {
+    const activeEventsList = document.getElementById('activeEventsList');
+    
+    if (!events || events.length === 0) {
+        activeEventsList.innerHTML = '<div class="no-events">暂无活动</div>';
+        return;
+    }
+    
+    const eventsHTML = events.map(event => `
+        <div class="management-event-card" data-event-id="${event.id}">
+            <div class="management-event-info">
+                <h4>${event.name}</h4>
+                <p>${event.category_name} • ${formatDate(event.event_date)}</p>
+                <p>📍 ${event.location}</p>
+            </div>
+            <button class="pause-btn" onclick="pauseEvent(${event.id})">
+                暂停
+            </button>
+        </div>
+    `).join('');
+    
+    activeEventsList.innerHTML = eventsHTML;
+}
+
+// 显示暂停的活动
+function displayPausedEvents(events) {
+    const pausedEventsList = document.getElementById('pausedEventsList');
+    
+    if (!events || events.length === 0) {
+        pausedEventsList.innerHTML = '<div class="no-events">暂无暂停的活动</div>';
+        return;
+    }
+    
+    const eventsHTML = events.map(event => `
+        <div class="management-event-card paused-event-card" data-event-id="${event.id}">
+            <div class="management-event-info">
+                <h4>${event.name}</h4>
+                <p>${event.category_name} • ${formatDate(event.event_date)}</p>
+                <p>📍 ${event.location}</p>
+            </div>
+            <button class="resume-btn" onclick="resumeEvent(${event.id})">
+                恢复
+            </button>
+        </div>
+    `).join('');
+    
+    pausedEventsList.innerHTML = eventsHTML;
+}
+
+// 暂停活动
+async function pauseEvent(eventId) {
+    try {
+        console.log(`⏸️  暂停活动 ID: ${eventId}`);
+        
+        const response = await fetch(`/api/events/${eventId}/pause`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            console.log('✅ 活动暂停成功');
+            // 重新加载活动管理面板
+            loadEventManagement();
+            // 重新加载首页的其他活动列表
+            loadAllEvents();
+        } else {
+            alert('暂停失败: ' + result.message);
+        }
+    } catch (error) {
+        console.error('❌ 暂停活动失败:', error);
+        alert('暂停失败，请重试');
+    }
+}
+
+// 恢复活动
+async function resumeEvent(eventId) {
+    try {
+        console.log(`▶️  恢复活动 ID: ${eventId}`);
+        
+        const response = await fetch(`/api/events/${eventId}/resume`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            console.log('✅ 活动恢复成功');
+            // 重新加载活动管理面板
+            loadEventManagement();
+            // 重新加载首页的其他活动列表
+            loadAllEvents();
+        } else {
+            alert('恢复失败: ' + result.message);
+        }
+    } catch (error) {
+        console.error('❌ 恢复活动失败:', error);
+        alert('恢复失败，请重试');
+    }
+}
+
+// 工具函数 - 格式化日期
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('zh-CN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+// 在页面加载时调用
+document.addEventListener('DOMContentLoaded', function() {
+    // 原有的加载函数
+    loadOrganisations();
+    loadAllEvents();
+    
+    // 新增：加载活动管理面板
+    loadEventManagement();
+});

@@ -1699,3 +1699,114 @@ body {
         font-size: 1rem;
     }
 }
+/* 活动管理面板样式 */
+.event-management-panel {
+    background: #f8f9fa;
+    padding: 3rem 0;
+    margin-top: 2rem;
+}
+
+.management-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.active-events, .pause-events {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.active-events h3, .pause-events h3 {
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.management-events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.management-event-card {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.management-event-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+}
+
+.management-event-info p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.pause-btn, .resume-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.pause-btn {
+    background: #ffc107;
+    color: #212529;
+}
+
+.pause-btn:hover {
+    background: #e0a800;
+}
+
+.resume-btn {
+    background: #28a745;
+    color: white;
+}
+
+.resume-btn:hover {
+    background: #218838;
+}
+
+.paused-event-card {
+    border-left-color: #6c757d;
+    background: #e9ecef;
+}
+
+.no-events {
+    text-align: center;
+    color: #6c757d;
+    padding: 2rem;
+    font-style: italic;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .management-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .management-event-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .pause-btn, .resume-btn {
+        align-self: flex-end;
+    }
+}

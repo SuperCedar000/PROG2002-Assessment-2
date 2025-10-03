@@ -193,22 +193,19 @@ async function filterEventsByCategory(categoryName) {
     showLoading();
     try {
         console.log(`🏷️ 筛选分类: ${categoryName}`);
-        const response = await fetch(`${API_BASE_URL}/events`);
+        
+        // 使用搜索API来按分类筛选
+        const response = await fetch(`${API_BASE_URL}/events/search?category=${encodeURIComponent(categoryName)}`);
         const data = await response.json();
         
         if (data.success) {
-            // 筛选指定分类的活动
-            const filteredEvents = data.data.filter(event => 
-                event.category_name === categoryName
-            );
-            
-            displayEvents(filteredEvents);
+            displayEvents(data.data);
             
             // 更新页面标题显示筛选结果
             const eventsTitle = document.querySelector('.events-section h2');
-            eventsTitle.textContent = `${categoryName} 分类 (${filteredEvents.length} 个活动)`;
+            eventsTitle.textContent = `${categoryName} 分类 (${data.data.length} 个活动)`;
             
-            console.log(`✅ 筛选完成: ${filteredEvents.length} 个活动`);
+            console.log(`✅ 筛选完成: ${data.data.length} 个活动`);
         }
     } catch (error) {
         console.error('❌ 筛选活动失败:', error);
@@ -216,7 +213,6 @@ async function filterEventsByCategory(categoryName) {
         hideLoading();
     }
 }
-
 // 重置筛选，显示所有活动
 function resetCategoryFilter() {
     loadEvents();
