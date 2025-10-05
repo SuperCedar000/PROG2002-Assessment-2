@@ -15,7 +15,7 @@ let organisations = [];
 
 // 页面加载时初始化
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏠 首页初始化');
+    console.log('🏠 Home page initialization');
     loadOrganisations();
     loadEvents();
 });
@@ -23,30 +23,30 @@ document.addEventListener('DOMContentLoaded', function() {
 // 加载慈善组织信息
 async function loadOrganisations() {
     try {
-        console.log('🏢 加载组织信息...');
+        console.log('🏢 Load organizational information...');
         
-        // 模拟组织数据 - 在实际应用中可以从API获取
+        
         organisations = [
             {
                 id: 1,
-                name: "Red Cross Australia",
-                description: "The Australian Red Cross is part of the world's largest humanitarian network. We are a not-for-profit organisation helping people and communities in Australia and overseas.",
+                name: "Australian Charities",
+                description: "The Australian Charities is part of the world's charitable aid network. It is a non-profit organization that helps people and communities in Australia and overseas.",
                 email: "conxxx@.com",
                 phone: "18xx xxx xxx",
                 website: "https://www.xxx.xx.x"
             },
             {
                 id: 2,
-                name: "Cancer Council",
-                description: "Cancer Council is Australia's leading cancer charity. We work across every area of every cancer, from research to prevention and support.",
+                name: "Poor Children Protection Program",
+                description: "The Poor Children Protection Committee is a world-leading charity organization that helps children. The work covers every field, ranging from focusing on children's food and clothing as well as educational issues.",
                 email: "info@.com",
                 phone: "13 xxx x",
                 website: "https://www.xxxx.xxx"
             },
             {
                 id: 3,
-                name: "World Wildlife Fund Australia",
-                description: "WWF-Australia is part of the WWF International Network, the world's leading, independent conservation organization. We're creating a world where people live in harmony with nature.",
+                name: "World Foundation for Good",
+                description: "The Public Welfare Foundation - is part of the World United Foundation's international network, a leading independent organization dedicated to protecting various public welfare causes. We are creating a world where people live in harmony with each other.",
                 email: "enxxiries@.com",
                 phone: "1xxx xx 231",
                 website: "https://.com"
@@ -57,7 +57,7 @@ async function loadOrganisations() {
         
     } catch (error) {
         console.error('❌ 加载组织信息失败:', error);
-        organisationsGrid.innerHTML = '<p class="error">加载组织信息失败</p>';
+        organisationsGrid.innerHTML = '<p class="error">The loading activity failed.</p>';
     }
 }
 
@@ -123,7 +123,7 @@ async function loadEvents() {
         
     } catch (error) {
         console.error('❌ 加载活动失败:', error);
-        allEventsList.innerHTML = '<p class="error">加载活动失败</p>';
+        allEventsList.innerHTML = '<p class="error">The loading activity failed.</p>';
     } finally {
         hideLoading();
     }
@@ -132,7 +132,7 @@ async function loadEvents() {
 // 显示所有活动列表
 function displayAllEvents(events) {
     if (!events || events.length === 0) {
-        allEventsList.innerHTML = '<p class="empty-message">暂无活动数据</p>';
+        allEventsList.innerHTML = '<p class="empty-message">There is no activity data available for the moment</p>';
         return;
     }
 
@@ -141,13 +141,13 @@ function displayAllEvents(events) {
             <span class="event-name">${event.name}</span>
             <div class="event-actions">
                 <button class="status-btn status-upcoming" onclick="moveToUpcoming(${event.id})">
-                    即将到来
+                    Coming soon
                 </button>
                 <button class="status-btn status-past" onclick="moveToPast(${event.id})">
-                    已结束
+                    over
                 </button>
                 <a href="index.html#event-${event.id}" class="details-btn">
-                    详情
+                    For details
                 </a>
             </div>
         </div>
@@ -172,10 +172,10 @@ function moveToUpcoming(eventId) {
                     <span class="event-name">${event.name}</span>
                     <div class="event-actions">
                         <button class="status-btn status-past" onclick="moveToPast(${eventId})">
-                            已结束
+                            over
                         </button>
                         <a href="index.html#event-${eventId}" class="details-btn">
-                            详情
+                            For details
                         </a>
                     </div>
                 </div>
@@ -202,10 +202,10 @@ function moveToPast(eventId) {
                     <span class="event-name">${event.name}</span>
                     <div class="event-actions">
                         <button class="status-btn status-upcoming" onclick="moveToUpcoming(${eventId})">
-                            即将到来
+                            Coming soon
                         </button>
                         <a href="index.html#event-${eventId}" class="details-btn">
-                            详情
+                            For details
                         </a>
                     </div>
                 </div>
@@ -234,8 +234,8 @@ function displayPausedEvents() {
     const pausedEvents = [
         {
             id: 'paused-001',
-            name: '冬季越野自行车',
-            reason: '因政策禁止无关人员进入自然保护区'
+            name: 'Winter mountain biking',
+            reason: 'Due to policy, irrelevant personnel are prohibited from entering the nature reserve'
         }
     ];
 
@@ -261,22 +261,22 @@ function displayPausedEvents() {
 function updateEmptyStates() {
     // 检查所有活动列表是否为空
     if (allEventsList.children.length === 0) {
-        allEventsList.innerHTML = '<p class="empty-message">所有活动已分类</p>';
+        allEventsList.innerHTML = '<p class="empty-message">All activities have been classified</p>';
     }
     
     // 检查即将到来活动列表是否为空
     if (upcomingEventsList.children.length === 0) {
-        upcomingEventsList.innerHTML = '<p class="empty-message">暂无即将到来活动</p>';
+        upcomingEventsList.innerHTML = '<p class="empty-message">There are no upcoming events for now</p>';
     }
     
     // 检查已结束活动列表是否为空
     if (pastEventsList.children.length === 0) {
-        pastEventsList.innerHTML = '<p class="empty-message">暂无已结束活动</p>';
+        pastEventsList.innerHTML = '<p class="empty-message">There are no concluded activities for the time being</p>';
     }
     
     // 检查暂停活动列表是否为空
     if (pausedEventsList.children.length === 0) {
-        pausedEventsList.innerHTML = '<p class="empty-message">暂无暂停活动</p>';
+        pausedEventsList.innerHTML = '<p class="empty-message">There is no suspension of activities for the time being</p>';
     }
 }
 

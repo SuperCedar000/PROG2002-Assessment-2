@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>所有活动 - 慈善活动平台</title>
+    <title>Event Details - Charity Event Platform</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         /* 自定义搜索区域背景图片 - 增加宽度 */
@@ -106,14 +106,14 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <span class="brand-text">AxX. Charity organization</span>
-                <h1 class="nav-logo">慈善活动平台</h1>
+                <span class="brand-text">Coastal Charity Guardian Platform</span>
+                <h1 class="nav-logo">All activities will be displayed here</h1>
             </div>
             <div class="nav-links">
-                <a href="home.html" class="nav-link">首页</a>
-                <a href="index.html" class="nav-link active">所有活动</a>
-                <a href="search.html" class="nav-link">搜索</a>
-                <a href="help.html" class="nav-link">帮助</a>
+                <a href="home.html" class="nav-link">HOME</a>
+                <a href="index.html" class="nav-link active">Event Details</a>
+                <a href="search.html" class="nav-link">Search</a>
+                <a href="help.html" class="nav-link">help</a>
             </div>
         </div>
     </nav>
@@ -121,10 +121,10 @@
     <!-- 修复：移除重复的id属性 -->
     <section class="search-section-custom" id="quickNavSection">
         <div class="container">
-            <h2 style="color: white; text-align: center; margin-bottom: 1.5rem; font-size: 2.5rem; font-weight: 300; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);">快速导航</h2>
+            <h2 style="color: white; text-align: center; margin-bottom: 1.5rem; font-size: 2.5rem; font-weight: 300; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);">Fast navigation</h2>
             <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
-                <p style="color: rgba(255, 255, 255, 0.95); font-size: 1.2rem; margin-bottom: 0; text-align: center; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);">想要更精确地查找活动？</p>
-                <a href="search.html" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">前往搜索页面</a>
+                <p style="color: rgba(255, 255, 255, 0.95); font-size: 1.2rem; margin-bottom: 0; text-align: center; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);">Want to find activities more precisely?</p>
+                <a href="search.html" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">Go to the search page</a>
             </div>
         </div>
     </section>
@@ -133,16 +133,16 @@
     <!-- 活动部分 -->
     <section id="events" class="events-section">
         <div class="container">
-            <h2>所有活动</h2>
+            <h2>All activities (Click on the activity card to expand and display all information)</h2>
             <div class="events-grid" id="eventsGrid">
                 <!-- 活动将通过 JavaScript 动态加载 -->
-                <div class="loading-placeholder">加载活动中...</div>
+                <div class="loading-placeholder">Loading the event...</div>
             </div>
         </div>
     </section>
 
     <!-- 加载指示器 -->
-    <div id="loading" class="loading hidden">加载中...</div>
+    <div id="loading" class="loading hidden">Loading...</div>
 
     <script>
         // 图片加载失败时使用备用背景

@@ -1,7 +1,7 @@
-// 搜索页面的专用 JavaScript
+// Specialized JavaScript for search page
 const API_BASE_URL = '/api';
 
-// DOM 元素
+// DOM elements
 const searchKeyword = document.getElementById('searchKeyword');
 const searchCategory = document.getElementById('searchCategory');
 const searchResultsGrid = document.getElementById('searchResultsGrid');
@@ -9,12 +9,12 @@ const resultsTitle = document.getElementById('resultsTitle');
 const noResults = document.getElementById('noResults');
 const loading = document.getElementById('loading');
 
-// 页面加载时初始化
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔍 搜索页面初始化');
+    console.log('🔍 Search page initialized');
     loadCategoriesForSearch();
     
-    // 如果有 URL 参数，自动执行搜索
+    // Auto-execute search if URL parameters exist
     const urlParams = new URLSearchParams(window.location.search);
     const keyword = urlParams.get('q');
     const category = urlParams.get('category');
@@ -27,20 +27,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (keyword || category) {
-        console.log('🔍 检测到URL参数，自动执行搜索:', { keyword, category });
+        console.log('🔍 Detected URL parameters, auto-executing search:', { keyword, category });
         performSearch();
     } else {
-        // 如果没有搜索条件，显示提示信息
-        resultsTitle.textContent = '请输入搜索条件';
+        // Show prompt if no search conditions
+        resultsTitle.textContent = 'Please enter search criteria';
         searchResultsGrid.innerHTML = '';
         noResults.classList.add('hidden');
     }
 });
 
-// 为搜索页面加载分类
+// Load categories for search page
 async function loadCategoriesForSearch() {
     try {
-        console.log('🏷️ 加载分类数据...');
+        console.log('🏷️ Loading category data...');
         const response = await fetch(`${API_BASE_URL}/categories`);
         
         if (!response.ok) {
@@ -48,100 +48,100 @@ async function loadCategoriesForSearch() {
         }
         
         const data = await response.json();
-        console.log('✅ 分类数据加载成功');
+        console.log('✅ Category data loaded successfully');
         
         if (data.success) {
             const optionsHTML = data.data.map(category => 
                 `<option value="${category.name}">${category.name}</option>`
             ).join('');
             
-            searchCategory.innerHTML = '<option value="">所有分类</option>' + optionsHTML;
-            console.log('🏷️ 分类下拉框已更新');
+            searchCategory.innerHTML = '<option value="">All categories</option>' + optionsHTML;
+            console.log('🏷️ Category dropdown updated');
         }
     } catch (error) {
-        console.error('❌ 加载分类失败:', error);
-        searchCategory.innerHTML = '<option value="">加载分类失败</option>';
+        console.error('❌ Failed to load categories:', error);
+        searchCategory.innerHTML = '<option value="">Failed to load categories</option>';
     }
 }
 
-// 执行搜索 - 修复版
+// Execute search - fixed version
 async function performSearch() {
     const keyword = searchKeyword.value.trim();
     const category = searchCategory.value;
     
-    console.log('🔍 执行搜索:', { keyword, category });
+    console.log('🔍 Executing search:', { keyword, category });
     
-    // 验证搜索条件
+    // Validate search criteria
     if (!keyword && !category) {
-        resultsTitle.textContent = '请输入搜索关键词或选择分类';
+        resultsTitle.textContent = 'Please enter a keyword or select a category';
         return;
     }
     
     showLoading();
     
     try {
-        console.log('📡 开始获取活动数据...');
+        console.log('📡 Starting to fetch event data...');
         
         const response = await fetch(`${API_BASE_URL}/events`);
         
         if (!response.ok) {
-            throw new Error(`HTTP错误! 状态码: ${response.status}`);
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
         
         const data = await response.json();
-        console.log('✅ 成功获取活动数据，总数:', data.count);
+        console.log('✅ Successfully fetched event data, total:', data.count);
         
         if (data.success && data.data) {
             let filteredEvents = data.data;
 
-            // 应用关键词搜索
+            // Apply keyword search
             if (keyword) {
-                console.log(`🔤 应用关键词筛选: "${keyword}"`);
+                console.log(`🔤 Applying keyword filter: "${keyword}"`);
                 filteredEvents = filteredEvents.filter(event => {
                     const nameMatch = event.name && event.name.toLowerCase().includes(keyword.toLowerCase());
                     const descMatch = event.description && event.description.toLowerCase().includes(keyword.toLowerCase());
                     const locationMatch = event.location && event.location.toLowerCase().includes(keyword.toLowerCase());
                     return nameMatch || descMatch || locationMatch;
                 });
-                console.log(`🔤 关键词筛选后: ${filteredEvents.length} 个活动`);
+                console.log(`🔤 After keyword filter: ${filteredEvents.length} events`);
             }
 
-            // 应用分类筛选
+            // Apply category filter
             if (category) {
-                console.log(`🏷️ 应用分类筛选: "${category}"`);
+                console.log(`🏷️ Applying category filter: "${category}"`);
                 filteredEvents = filteredEvents.filter(event => 
                     event.category_name === category
                 );
-                console.log(`🏷️ 分类筛选后: ${filteredEvents.length} 个活动`);
+                console.log(`🏷️ After category filter: ${filteredEvents.length} events`);
             }
 
-            console.log(`📊 最终搜索结果: ${filteredEvents.length} 个活动`);
+            console.log(`📊 Final search results: ${filteredEvents.length} events`);
             displaySearchResults(filteredEvents, keyword, category);
             updateURLParams(keyword, category);
         } else {
-            throw new Error('API返回数据格式错误');
+            throw new Error('API returned data format error');
         }
     } catch (error) {
-        console.error('❌ 搜索失败:', error);
-        displayError('搜索失败: ' + error.message);
+        console.error('❌ Search failed:', error);
+        displayError('Search failed: ' + error.message);
     } finally {
         hideLoading();
     }
 }
 
-// 显示搜索结果（新版：展开/收起模式）
+// Display search results (new version: expand/collapse mode)
 function displaySearchResults(events, keyword, category) {
-    console.log('📊 显示搜索结果:', events);
+    console.log('📊 Displaying search results:', events);
     
     if (!events || events.length === 0) {
         searchResultsGrid.innerHTML = '';
         noResults.classList.remove('hidden');
         
-        let message = '没有找到匹配的活动';
+        let message = 'No matching events found';
         if (keyword || category) {
-            message += '：';
-            if (keyword) message += ` 关键词"${keyword}"`;
-            if (category) message += ` 分类"${category}"`;
+            message += ':';
+            if (keyword) message += ` keyword "${keyword}"`;
+            if (category) message += ` category "${category}"`;
         }
         noResults.querySelector('p').textContent = message;
         
@@ -150,24 +150,24 @@ function displaySearchResults(events, keyword, category) {
 
     noResults.classList.add('hidden');
     
-    // 更新结果标题
-    let title = `找到 ${events.length} 个活动`;
+    // Update results title
+    let title = `Found ${events.length} events`;
     if (keyword || category) {
-        title += '（';
-        if (keyword) title += `关键词: "${keyword}" `;
-        if (category) title += `分类: "${category}"`;
-        title += '）';
+        title += ' (';
+        if (keyword) title += `keyword: "${keyword}" `;
+        if (category) title += `category: "${category}"`;
+        title += ')';
     }
     resultsTitle.textContent = title;
 
-    // 显示活动卡片（使用新的展开/收起模式）
+    // Display event cards (using new expand/collapse mode)
     const eventsHTML = events.map(event => {
-        // 确保数据存在
-        const eventName = event.name || '未命名活动';
-        const organisation = event.organisation_name || '未知组织';
-        const description = event.description || '暂无描述';
-        const location = event.location || '地点未知';
-        const categoryName = event.category_name || '未分类';
+        // Ensure data exists
+        const eventName = event.name || 'Untitled event';
+        const organisation = event.organisation_name || 'Unknown organization';
+        const description = event.description || 'No description available';
+        const location = event.location || 'Location unknown';
+        const categoryName = event.category_name || 'Uncategorized';
         const currentAmount = event.current_amount || '0';
         const goalAmount = event.goal_amount || '0';
         const ticketPrice = event.ticket_price || '0';
@@ -192,7 +192,7 @@ function displaySearchResults(events, keyword, category) {
                     </div>
                     <div class="preview-actions">
                         <div class="ticket-price">
-                            ${ticketPrice === '0.00' ? '免费' : `$${formatCurrency(ticketPrice)}`}
+                            ${ticketPrice === '0.00' ? 'free' : `$${formatCurrency(ticketPrice)}`}
                         </div>
                     </div>
                 </div>
@@ -222,20 +222,20 @@ function displaySearchResults(events, keyword, category) {
                         <div class="progress-fill" style="width: ${calculateProgress(currentAmount, goalAmount)}%"></div>
                     </div>
                     <div class="progress-text">
-                        <span>已筹: $${formatCurrency(currentAmount)}</span>
-                        <span>目标: $${formatCurrency(goalAmount)}</span>
+                        <span>Raised: $${formatCurrency(currentAmount)}</span>
+                        <span>Goal: $${formatCurrency(goalAmount)}</span>
                     </div>
                 </div>
                 <div class="event-footer">
                     <div class="ticket-price">
-                        ${ticketPrice === '0.00' ? '免费' : `$${formatCurrency(ticketPrice)}`}
+                        ${ticketPrice === '0.00' ? 'Free' : `$${formatCurrency(ticketPrice)}`}
                     </div>
                     <div>
                         <button class="view-details expanded" onclick="toggleEventDetails(${event.id})">
-                            收起详情
+                            Collapse
                         </button>
                         <button class="view-details" onclick="viewEventDetails(${event.id})">
-                            更多信息
+                            more
                         </button>
                     </div>
                 </div>
@@ -245,61 +245,63 @@ function displaySearchResults(events, keyword, category) {
     }).join('');
 
     searchResultsGrid.innerHTML = eventsHTML;
-    console.log('✅ 搜索结果渲染完成');
+    console.log('✅ Search results rendered');
 }
 
-// 切换活动详情展开/收起
+// Toggle event details expand/collapse
 function toggleEventDetails(eventId) {
     const eventCard = document.querySelector(`.event-card[data-event-id="${eventId}"]`);
     if (eventCard) {
         const isExpanded = eventCard.classList.contains('expanded');
         
         if (isExpanded) {
-            // 收起详情
+            // Collapse details
             eventCard.classList.remove('expanded');
             eventCard.classList.add('collapsed');
         } else {
-            // 展开详情
+            // Expand details
             eventCard.classList.remove('collapsed');
             eventCard.classList.add('expanded');
         }
     }
 }
 
-// 查看活动详情 - 修复版
+// View event details - 跳转到 index.html 页面
 function viewEventDetails(eventId) {
-    // 安全地阻止事件冒泡
+    // Safely prevent event bubbling
     const clickEvent = window.event || arguments[0];
     if (clickEvent) {
         clickEvent.stopPropagation();
         clickEvent.preventDefault();
     }
     
-    // 验证eventId
+    // Validate eventId
     if (isNaN(eventId) || eventId <= 0) {
-        console.error('❌ 无效的活动ID:', eventId);
-        alert('无效的活动ID');
+        console.error('❌ Invalid event ID:', eventId);
+        alert('Invalid event ID');
         return false;
     }
     
-    console.log(`查看活动详情: ${eventId}`);
-    alert(`查看活动详情 ID: ${eventId}\n\n在实际应用中，这里会显示活动的完整信息、注册表单等。`);
+    console.log(`🔍 Viewing event details ID: ${eventId}`);
+    
+    // 跳转到 index.html 页面，传递 eventId 参数
+    window.location.href = `index.html?eventId=${eventId}`;
     
     return false;
 }
 
-// 显示错误信息
+// Display error message
 function displayError(message) {
     searchResultsGrid.innerHTML = `
         <div class="error-message">
             <p>${message}</p>
-            <button onclick="performSearch()" class="retry-button">重试搜索</button>
+            <button onclick="performSearch()" class="retry-button">Retry Search</button>
         </div>
     `;
     noResults.classList.add('hidden');
 }
 
-// 更新 URL 参数
+// Update URL parameters
 function updateURLParams(keyword, category) {
     const params = new URLSearchParams();
     if (keyword) params.set('q', keyword);
@@ -307,28 +309,28 @@ function updateURLParams(keyword, category) {
     
     const newURL = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
     window.history.replaceState({}, '', newURL);
-    console.log('🔗 URL已更新:', newURL);
+    console.log('🔗 URL updated:', newURL);
 }
 
-// 清除搜索条件
+// Clear search criteria
 function clearSearch() {
     searchKeyword.value = '';
     searchCategory.value = '';
     searchResultsGrid.innerHTML = '';
     noResults.classList.add('hidden');
-    resultsTitle.textContent = '请输入搜索条件';
+    resultsTitle.textContent = 'Please enter search criteria';
     
-    // 清除URL参数
+    // Clear URL parameters
     window.history.replaceState({}, '', window.location.pathname);
-    console.log('🧹 搜索条件已清除');
+    console.log('🧹 Search criteria cleared');
 }
 
-// 工具函数
+// Utility functions
 function formatDate(dateString) {
     try {
-        if (!dateString) return '日期未知';
+        if (!dateString) return 'Date unknown';
         const date = new Date(dateString);
-        return date.toLocaleDateString('zh-CN', {
+        return date.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
@@ -362,26 +364,26 @@ function calculateProgress(current, goal) {
 
 function showLoading() {
     loading.classList.remove('hidden');
-    console.log('⏳ 显示加载中...');
+    console.log('⏳ Showing loading...');
 }
 
 function hideLoading() {
     loading.classList.add('hidden');
-    console.log('✅ 隐藏加载中');
+    console.log('✅ Hiding loading');
 }
 
-// 添加键盘事件
+// Add keyboard event
 searchKeyword.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
-        console.log('↵ 回车键触发搜索');
+        console.log('↵ Enter key triggered search');
         performSearch();
     }
 });
 
-// 添加分类变化事件（自动搜索）
+// Add category change event (auto-search)
 searchCategory.addEventListener('change', function() {
     if (searchCategory.value) {
-        console.log('🏷️ 分类变化触发搜索');
+        console.log('🏷️ Category change triggered search');
         performSearch();
     }
 });

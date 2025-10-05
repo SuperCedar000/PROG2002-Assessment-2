@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname)));
 // 导入数据库模块
 const db = require('./event_db');
 
-// 初始化数据库（应用启动时自动初始化）
+// 初始化应用（跳过数据初始化）
 async function initializeApp() {
     try {
         console.log('🔧 初始化应用...');
@@ -27,13 +27,10 @@ async function initializeApp() {
             throw new Error('数据库连接失败，请确保MySQL服务正在运行');
         }
         
-        // 初始化数据库结构
-        await db.initializeDatabase();
+        // 只测试连接，不创建表和插入数据
+        console.log('✅ 数据库连接正常，跳过数据初始化');
+        console.log('💡 请确保已手动执行 schema.sql 文件');
         
-        // 插入样本数据
-        await db.insertSampleData();
-        
-        console.log('✅ 应用初始化完成');
         return true;
     } catch (error) {
         console.error('❌ 应用初始化失败:', error.message);
@@ -69,7 +66,7 @@ app.get('/debug-db', async (req, res) => {
                 count: allEvents.length,
                 sample_data: allEvents.slice(0, 3) // 只显示前3个作为样本
             },
-            message: stats.events_count === 0 ? "警告: 活动表为空!" : 
+            message: stats.events_count === 0 ? "警告: 活动表为空! 请执行 schema.sql 文件" : 
                      allEvents.length === 0 ? "警告: getAllEvents返回空数组!" : "数据正常"
         });
     } catch (error) {
@@ -234,7 +231,7 @@ app.use((error, req, res, next) => {
 // 启动服务器
 async function startServer() {
     try {
-        // 先初始化应用
+        // 先初始化应用（只测试连接）
         await initializeApp();
         
         // 然后启动服务器
@@ -252,7 +249,8 @@ async function startServer() {
             console.log(`   📋 所有活动: http://localhost:${PORT}/`);
             console.log(`   🔍 搜索页:   http://localhost:3000/search`);
             console.log(`   ❓ 帮助页:   http://localhost:3000/help`);
-            console.log('\n💡 提示: 请通过上面的HTTP地址访问应用');
+            console.log('\n💡 重要提示: 请确保已手动执行 schema.sql 文件');
+            console.log('💡 命令: mysql -u root -p root123 < schema.sql');
             console.log('=====================================\n');
         });
         

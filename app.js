@@ -8,9 +8,25 @@ const categoryFilter = document.getElementById('categoryFilter');
 const searchInput = document.getElementById('searchInput');
 const loading = document.getElementById('loading');
 
+// 全局变量存储当前活动数据
+let currentEvents = [];
+
 // 初始化应用
 document.addEventListener('DOMContentLoaded', function() {
-    loadEvents();
+    console.log('🚀 应用初始化...');
+    
+    // 检查URL参数，判断是否需要显示特定活动详情
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('eventId');
+    
+    if (eventId) {
+        console.log(`📋 检测到活动ID参数: ${eventId}`);
+        loadEventDetail(eventId);
+    } else {
+        console.log('📋 加载所有活动列表');
+        loadEvents();
+    }
+    
     loadCategories();
 });
 
@@ -29,6 +45,7 @@ async function loadEvents() {
         console.log('API响应数据:', data);
         
         if (data.success) {
+            currentEvents = data.data; // 保存活动数据
             displayEvents(data.data);
         } else {
             throw new Error('API返回失败状态');
@@ -52,25 +69,119 @@ async function loadEvents() {
     }
 }
 
-// 加载分类
-async function loadCategories() {
+// 加载特定活动详情
+async function loadEventDetail(eventId) {
+    showLoading();
     try {
-        const response = await fetch(`${API_BASE_URL}/categories`);
+        console.log(`📨 加载活动详情 ID: ${eventId}`);
+        const response = await fetch(`${API_BASE_URL}/events/${eventId}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
+        console.log('活动详情响应:', data);
         
         if (data.success) {
-            displayCategories(data.data);
-            populateCategoryFilter(data.data);
+            displayEventDetail(data.data);
+        } else {
+            throw new Error(data.message || '活动未找到');
         }
     } catch (error) {
-        console.error('Error loading categories:', error);
+        console.error('Error loading event detail:', error);
+        eventsGrid.innerHTML = `
+            <div class="error-message">
+                <p>加载活动详情失败</p>
+                <p>错误信息: ${error.message}</p>
+                <button onclick="backToEventList()" class="retry-button">返回活动列表</button>
+            </div>
+        `;
+    } finally {
+        hideLoading();
     }
+}
+
+// 显示活动详情页面
+function displayEventDetail(event) {
+    const eventDetailHTML = `
+        <div class="event-detail-view">
+            <div class="detail-header">
+                <button onclick="backToEventList()" class="back-button">← Back to All Activities</button>
+                <h2>Activity Details</h2>
+            </div>
+            
+            <div class="event-detail-card">
+                <div class="event-header">
+                    <h1 class="event-title">${event.name || 'Untitled Event'}</h1>
+                    <p class="event-organisation">${event.organisation_name || 'Unknown Organization'}</p>
+                </div>
+                
+                <p class="event-description">${event.description || 'No description available.'}</p>
+                
+                <div class="event-details-grid">
+                    <div class="detail-item">
+                        <span>📅</span>
+                        <span><strong>Date & Time:</strong> ${formatDate(event.event_date)} ${event.event_time || ''}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>📍</span>
+                        <span><strong>Location:</strong> ${event.location || 'Location unknown'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>🏷️</span>
+                        <span><strong>Category:</strong> ${event.category_name || 'Uncategorized'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>👥</span>
+                        <span><strong>Organization:</strong> ${event.organisation_name || 'Unknown Organization'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>💰</span>
+                        <span><strong>Ticket Price:</strong> ${event.ticket_price === '0.00' ? 'Free' : '$' + formatCurrency(event.ticket_price)}</span>
+                    </div>
+                </div>
+                
+                <div class="progress-section">
+                    <h3>Fundraising Progress</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${calculateProgress(event.current_amount, event.goal_amount)}%"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span>Raised: $${formatCurrency(event.current_amount)}</span>
+                        <span>Goal: $${formatCurrency(event.goal_amount)}</span>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="register-button" onclick="registerForEvent(${event.id})">
+                        Register for this Activity
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    eventsGrid.innerHTML = eventDetailHTML;
+    
+    // 更新页面标题
+    document.querySelector('.events-section h2').textContent = 'Activity Details';
+}
+
+// 返回活动列表
+function backToEventList() {
+    // 清除URL参数
+    window.history.replaceState({}, '', 'index.html');
+    // 重新加载活动列表
+    loadEvents();
+    // 恢复页面标题
+    document.querySelector('.events-section h2').textContent = 'All activities (Click on the activity card to expand and display all information)';
 }
 
 // 显示活动列表（新版：展开/收起模式）
 function displayEvents(events) {
     if (!events || events.length === 0) {
-        eventsGrid.innerHTML = '<p class="no-events">暂无活动数据</p>';
+        eventsGrid.innerHTML = '<p class="no-events">No activity data available</p>';
         return;
     }
 
@@ -94,7 +205,7 @@ function displayEvents(events) {
                     </div>
                     <div class="preview-actions">
                         <div class="ticket-price">
-                            ${event.ticket_price === '0.00' ? '免费' : `$${formatCurrency(event.ticket_price)}`}
+                            ${event.ticket_price === '0.00' ? 'free' : `$${formatCurrency(event.ticket_price)}`}
                         </div>
                     </div>
                 </div>
@@ -124,20 +235,20 @@ function displayEvents(events) {
                         <div class="progress-fill" style="width: ${calculateProgress(event.current_amount, event.goal_amount)}%"></div>
                     </div>
                     <div class="progress-text">
-                        <span>已筹: $${formatCurrency(event.current_amount)}</span>
-                        <span>目标: $${formatCurrency(event.goal_amount)}</span>
+                        <span>Already prepared: $${formatCurrency(event.current_amount)}</span>
+                        <span>Planned goals: $${formatCurrency(event.goal_amount)}</span>
                     </div>
                 </div>
                 <div class="event-footer">
                     <div class="ticket-price">
-                        ${event.ticket_price === '0.00' ? '免费' : `$${formatCurrency(event.ticket_price)}`}
+                        ${event.ticket_price === '0.00' ? 'free' : `$${formatCurrency(event.ticket_price)}`}
                     </div>
                     <div>
                         <button class="view-details expanded" onclick="toggleEventDetails(${event.id})">
-                            收起详情
+                          Collapse  
                         </button>
                         <button class="view-details" onclick="viewEventDetails(${event.id})">
-                            更多信息
+                            more
                         </button>
                     </div>
                 </div>
@@ -166,19 +277,45 @@ function toggleEventDetails(eventId) {
     }
 }
 
-// 查看活动详情（跳转到详情页或显示模态框）
+// 查看活动详情（跳转到详情页）
 function viewEventDetails(eventId) {
     // 阻止事件冒泡，避免触发toggleEventDetails
-    event.stopPropagation();
+    if (window.event) {
+        window.event.stopPropagation();
+        window.event.preventDefault();
+    }
     
-    alert(`查看活动详情 ID: ${eventId}\n\n在实际应用中，这里会跳转到活动详情页面或显示模态框。`);
+    console.log(`🔍 查看活动详情 ID: ${eventId}`);
     
-    // 示例：在控制台显示活动详情
-    console.log(`查看活动详情: ${eventId}`);
+    // 在当前页面跳转，添加eventId参数
+    window.location.href = `index.html?eventId=${eventId}`;
+}
+
+// 注册活动
+function registerForEvent(eventId) {
+    alert(`Registering for Activity ID: ${eventId}\n\nIn a real application, this would open a registration form.`);
+    // 在实际应用中，这里会打开注册表单
+}
+
+// 加载分类
+async function loadCategories() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/categories`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayCategories(data.data);
+            populateCategoryFilter(data.data);
+        }
+    } catch (error) {
+        console.error('Error loading categories:', error);
+    }
 }
 
 // 显示分类
 function displayCategories(categories) {
+    if (!categoriesGrid) return;
+    
     const categoriesHTML = categories.map(category => `
         <div class="category-card" onclick="filterEventsByCategory('${category.name}')">
             <h3>${category.name}</h3>
@@ -203,15 +340,15 @@ async function filterEventsByCategory(categoryName) {
             
             // 更新页面标题显示筛选结果
             const eventsTitle = document.querySelector('.events-section h2');
-            eventsTitle.textContent = `${categoryName} 分类 (${data.data.length} 个活动)`;
+            eventsTitle.textContent = `${categoryName} Category (${data.data.length} activities)`;
             
-            console.log(`✅ 筛选完成: ${data.data.length} 个活动`);
+            console.log(`✅ Filter completed: ${data.data.length} activities`);
         } else {
-            console.error('❌ API返回失败');
+            console.error('❌ API returned failure');
             displayEvents([]);
         }
     } catch (error) {
-        console.error('❌ 筛选活动失败:', error);
+        console.error('❌ Filtering activities failed:', error);
         displayEvents([]);
     } finally {
         hideLoading();
@@ -222,54 +359,70 @@ async function filterEventsByCategory(categoryName) {
 function resetCategoryFilter() {
     loadEvents();
     const eventsTitle = document.querySelector('.events-section h2');
-    eventsTitle.textContent = '所有活动';
-    console.log('🔄 重置筛选，显示所有活动');
+    eventsTitle.textContent = 'All activities (Click on the activity card to expand and display all information)';
+    console.log('🔄 Reset filter, display all activities');
 }
 
 // 填充分类筛选下拉框
 function populateCategoryFilter(categories) {
+    if (!categoryFilter) return;
+    
     const optionsHTML = categories.map(category => `
         <option value="${category.name}">${category.name}</option>
     `).join('');
 
-    categoryFilter.innerHTML = '<option value="">所有分类</option>' + optionsHTML;
+    categoryFilter.innerHTML = '<option value="">All categories</option>' + optionsHTML;
 }
 
 // 工具函数
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('zh-CN', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    if (!dateString) return 'Date unknown';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    } catch (error) {
+        return dateString;
+    }
 }
 
 function formatCurrency(amount) {
-    return parseFloat(amount).toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
+    try {
+        if (!amount) return '0';
+        return parseFloat(amount).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    } catch (error) {
+        return amount;
+    }
 }
 
 function calculateProgress(current, goal) {
-    const currentNum = parseFloat(current);
-    const goalNum = parseFloat(goal);
-    return Math.min((currentNum / goalNum) * 100, 100);
+    try {
+        const currentNum = parseFloat(current) || 0;
+        const goalNum = parseFloat(goal) || 1;
+        return Math.min((currentNum / goalNum) * 100, 100);
+    } catch (error) {
+        return 0;
+    }
 }
 
 function showLoading() {
-    loading.classList.remove('hidden');
+    if (loading) loading.classList.remove('hidden');
 }
 
 function hideLoading() {
-    loading.classList.add('hidden');
+    if (loading) loading.classList.add('hidden');
 }
 
 // 重置搜索条件
 function resetSearch() {
-    searchInput.value = '';
-    categoryFilter.value = '';
+    if (searchInput) searchInput.value = '';
+    if (categoryFilter) categoryFilter.value = '';
     loadEvents();
-    document.querySelector('.events-section h2').textContent = '所有活动';
+    document.querySelector('.events-section h2').textContent = 'All activities (Click on the activity card to expand and display all information)';
 }
