@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search - Charity Event Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <span class="brand-text">Coastal Charity Guardian Platform</span>
+            <h1 class="nav-logo">Search</h1>
+            <div class="nav-links">
+                <a href="home.html" class="nav-link">HOME</a>
+                <a href="index.html" class="nav-link">Event Details</a>
+                <a href="search.html" class="nav-link active">search</a>
+                <a href="help.html" class="nav-link">help</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 独立搜索页面内容 -->
+    <section class="search-page">
+        <div class="container">
+            <h1>Search activity</h1>
+            <p class="search-description">Filter the activities you are interested in through keywords and categories</p>
+            
+            <div class="search-controls">
+                <div class="search-input-group">
+                    <input type="text" id="searchKeyword" placeholder="Enter the name, description or location of the activity..." class="search-input">
+                    <select id="searchCategory" class="search-select">
+                        <option value="">ALL</option>
+                    </select>
+                    <button id="searchButton" class="search-button">search</button>
+                    <button id="clearButton" class="clear-button">Clear</button>
+                </div>
+            </div>
+
+            <!-- 搜索结果区域 -->
+            <div class="search-results">
+                <h2 id="resultsTitle">Please enter search criteria</h2>
+                <div id="searchResultsGrid" class="events-grid">
+                    <!-- 搜索结果将通过 JavaScript 动态加载 -->
+                </div>
+                <div id="noResults" class="no-results hidden">
+                    <p>No matching activities were found</p>
+                    <p>Please try other search keywords or categories</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 加载提示 -->
+    <div id="loading" class="loading">Loading...</div>
+
+    <!-- JavaScript 文件 -->
+    <script src="search.js"></script>
+</body>
+</html>

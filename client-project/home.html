@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page - Charity Activity Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="brand-text">Coastal Charity Guardian Platform</span>
+                <h1 class="nav-logo">Charity event platform</h1>
+            </div>
+            <div class="nav-links">
+                <a href="home.html" class="nav-link active">HOME</a>
+                <a href="index.html" class="nav-link">Event Details</a>
+                <a href="search.html" class="nav-link">Search</a>
+                <a href="help.html" class="nav-link">help</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 慈善组织介绍 -->
+    <section class="organisations-section">
+        <div class="container">
+            <h2>Charity Organisations</h2>
+            <div class="organisations-grid" id="organisationsGrid">
+                <!-- 组织信息将通过 JavaScript 动态加载 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 活动管理区域 -->
+    <section class="home-events-section">
+        <div class="container">
+            <h2>Activity management</h2>
+            
+            <!-- 活动列表 -->
+            <div class="events-management">
+                <div class="all-events-list">
+                    <h3>All activities</h3>
+                    <div class="events-list" id="allEventsList">
+                        <!-- 所有活动列表将通过 JavaScript 动态加载 -->
+                    </div>
+                </div>
+
+                <!-- 分类活动区域 -->
+                <div class="categorized-events">
+                    <div class="upcoming-events">
+                        <h3>Upcoming event</h3>
+                        <div class="events-list" id="upcomingEventsList">
+                            <!-- 即将到来活动将在这里显示 -->
+                        </div>
+                    </div>
+
+                    <div class="past-events">
+                        <h3>The event has ended</h3>
+                        <div class="events-list" id="pastEventsList">
+                            <!-- 已结束活动将在这里显示 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 平台数据统计 - 放在活动管理区域之后 -->
+    <section class="platform-stats-section">
+        <div class="container">
+            <h2>Latest updates</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-number">10.9 billion US dollars</div>
+                    <div class="stat-label">Funding amount</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-number">300 enterprises</div>
+                    <div class="stat-label">Cumulative cooperative institutions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-number">200</div>
+                    <div class="stat-label">Cumulative funded projects</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="paused-events">
+    <h3>Suspended activity (will not be recorded due to policy violation)</h3>
+    <div class="events-list" id="pausedEventsList">
+        <!-- 暂停活动将在这里显示 -->
+    </div>
+</div>
+    
+    <!-- 加载提示 -->
+    <div id="loading" class="loading">加载中...</div>
+
+    <!-- JavaScript 文件 -->
+    <script src="home.js"></script>
+</body>
+</html>

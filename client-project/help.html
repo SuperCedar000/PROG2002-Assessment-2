@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help - Charity Event Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Help page top background image */
+        .help-hero-section {
+            background: url('./images/PICTURE3.jpg') center center / cover no-repeat;
+            min-height: 300px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+        }
+        .help-hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+        }
+        .help-hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+            color: white !important; /* Ensure title is white */
+        }
+        .help-hero-content .help-description {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 0;
+            color: white !important; /* Ensure description text is white */
+        }
+        
+        /* Alternative background solution - if image doesn't display */
+        .help-hero-section.fallback-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+        
+        /* Ensure all text is white on the background panel */
+        .help-hero-section * {
+            color: white !important;
+        }
+
+        /* Help content area styles */
+        .help-section {
+            padding: 2rem 0;
+        }
+        
+        .help-section-box {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .help-section-box h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .navigation-help {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .nav-help-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .nav-help-item h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-help-item p {
+            color: #666;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .nav-help-item ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .nav-help-item li {
+            padding: 0.3rem 0;
+            color: #555;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+        
+        .nav-help-item li:before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        /* Button demonstration styles */
+        .button-help-item h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .button-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .button-demo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem;
+        }
+        
+        .demo-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: default;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .status-upcoming {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .status-past {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .view-details {
+            background: #007bff;
+            color: white;
+        }
+        
+        .view-details.expanded {
+            background: #17a2b8;
+        }
+        
+        .search-button {
+            background: #28a745;
+            color: white;
+        }
+        
+        .clear-button {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .button-demo span {
+            color: #555;
+            font-size: 0.95rem;
+        }
+        
+        /* Join Us styles */
+        .join-us-content p {
+            color: #555;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+        
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .contact-item h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .contact-details {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 6px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .contact-info:last-child {
+            border-bottom: none;
+        }
+        
+        .contact-info strong {
+            color: #333;
+            min-width: 100px;
+        }
+        
+        .contact-info span {
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .working-hours {
+            background: #e7f3ff;
+            padding: 1.5rem;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .working-hours h4 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .working-hours p {
+            margin: 0.5rem 0;
+            color: #555;
+        }
+
+        /* Registration section styles */
+        .register-section {
+            margin-top: 2rem;
+        }
+        
+        .register-content p {
+            color: #555;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+        
+        .register-form {
+            max-width: 500px;
+            margin: 1.5rem 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+        
+        .register-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .register-message {
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+        
+        .register-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .register-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <span class="brand-text">Coastal Charity Guardian Platform</span>
+            <h1 class="nav-logo">Charity Event Platform</h1>
+            <div class="nav-links">
+                <a href="home.html" class="nav-link">Home</a>
+                <a href="index.html" class="nav-link">All Events</a>
+                <a href="search.html" class="nav-link">Search</a>
+                <a href="help.html" class="nav-link active">Help</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Help page top background panel -->
+    <section class="help-hero-section" id="helpHero">
+        <div class="container">
+            <div class="help-hero-content">
+                <h1 style="color: white !important;">Help Center</h1>
+                <p class="help-description" style="color: white !important;">Welcome to the Charity Event Platform, here are the platform features and usage guide</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Help page content -->
+    <section class="help-section">
+        <div class="container">
+            <!-- Navigation function description -->
+            <div class="help-section-box">
+                <h2>📋 Navigation Function Description</h2>
+                <div class="navigation-help">
+                    <div class="nav-help-item">
+                        <h3>🏠 Home</h3>
+                        <p>View charity organization information and event management</p>
+                        <ul>
+                            <li>Browse detailed information of partner charity organizations</li>
+                            <li>Manage event status (upcoming/ended)</li>
+                            <li>Quickly view all event lists</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="nav-help-item">
+                        <h3>📋 All Events</h3>
+                        <p>Browse and search all charity events</p>
+                        <ul>
+                            <li>View complete event card information</li>
+                            <li>Use quick search function to filter events</li>
+                            <li>Browse related events by category</li>
+                            <li>Click event cards to view detailed content</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="nav-help-item">
+                        <h3>🔍 Search</h3>
+                        <p>Advanced search and filtering functions</p>
+                        <ul>
+                            <li>Search by keywords for event names, descriptions and locations</li>
+                            <li>Filter precisely by event category</li>
+                            <li>View detailed search results</li>
+                            <li>Save search criteria</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button function description -->
+            <div class="help-section-box">
+                <h2>🛠️ Button Function Description</h2>
+                <div class="button-help">
+                    <div class="button-help-item">
+                        <h3>Event Card Operations</h3>
+                        <div class="button-examples">
+                            <div class="button-demo">
+                                <button class="demo-btn status-upcoming">Coming soon</button>
+                                <span> - Mark event as upcoming status</span>
+                            </div>
+                            <div class="button-demo">
+                                <button class="demo-btn status-past">over</button>
+                                <span> - Mark event as ended status</span>
+                            </div>
+                            <div class="button-demo">
+                                <button class="demo-btn view-details">For details</button>
+                                <span> - Expand complete event information</span>
+                            </div>
+                            <div class="button-demo">
+                                <button class="demo-btn view-details expanded">Collapse</button>
+                                <span> - Collapse event detailed information</span>
+                            </div>
+                            <div class="button-demo">
+                                <button class="demo-btn search-button">Search</button>
+                                <span> - Execute search operation</span>
+                            </div>
+                            <div class="button-demo">
+                                <button class="demo-btn clear-button">Clear</button>
+                                <span> - Clear search criteria</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Join Us -->
+            <div class="help-section-box join-us-section">
+                <h2>🤝 Join Us</h2>
+                <div class="join-us-content">
+                    <p>We are always looking for enthusiastic volunteers and partners! If you want to participate in our charity events or become a partner, please contact us through the following methods:</p>
+                    
+                    <div class="contact-methods">
+                        <div class="contact-item">
+                            <h3>📧 Email Contact</h3>
+                            <div class="contact-details">
+                                <div class="contact-info">
+                                    <strong>Volunteer Application:</strong>
+                                    <span>volunteer@charityplatform.org</span>
+                                </div>
+                                <div class="contact-info">
+                                    <strong>Event Cooperation:</strong>
+                                    <span>partnership@charityplatform.org</span>
+                                </div>
+                                <div class="contact-info">
+                                    <strong>General Inquiry:</strong>
+                                    <span>info@charityplatform.org</span>
+                                </div>
+                                <div class="contact-info">
+                                    <strong>Technical Support:</strong>
+                                    <span>support@charityplatform.org</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <h3>📞 Phone Contact</h3>
+                            <div class="contact-details">
+                                <div class="contact-info">
+                                    <strong>Customer Service Hotline:</strong>
+                                    <span>1800-123-4567</span>
+                                </div>
+                                <div class="contact-info">
+                                    <strong>Volunteer Hotline:</strong>
+                                    <span>1800-765-4321</span>
+                                </div>
+                                <div class="contact-info">
+                                    <strong>Cooperation Inquiry:</strong>
+                                    <span>1800-888-9999</span>
+                                </div>
+                                <div class="contact-info">
+                                    <strong>Emergency Contact:</strong>
+                                    <span>1800-000-HELP</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="working-hours">
+                        <h4>⏰ Service Hours</h4>
+                        <p>Monday to Friday: 9:00 - 18:00</p>
+                        <p>Saturday: 10:00 - 16:00</p>
+                        <p>Sunday: Closed</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registration section -->
+            <div class="help-section-box register-section">
+                <h2>📝 Register Account</h2>
+                <div class="register-content">
+                    <p>Register an account to get more personalized services and event notifications</p>
+                    
+                    <form id="registerForm" class="register-form">
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" id="username" name="username" required 
+                                   placeholder="Please enter username (at least 3 characters)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" required 
+                                   placeholder="Please enter password (at least 6 characters)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password:</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required 
+                                   placeholder="Please enter password again">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" required 
+                                   placeholder="Please enter valid email address">
+                        </div>
+                        
+                        <button type="submit" class="register-btn">Register Now</button>
+                    </form>
+                    
+                    <div id="registerMessage" class="register-message" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JavaScript files -->
+    <script>
+        // Use alternative background when image fails to load
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroSection = document.getElementById('helpHero');
+            const bgImage = new Image();
+            
+            bgImage.onload = function() {
+                console.log('Background image loaded successfully');
+            };
+            
+            bgImage.onerror = function() {
+                console.log('Background image failed to load, using alternative background');
+                heroSection.classList.add('fallback-bg');
+                // Try other possible paths
+                const alternativePaths = [
+                    './PICTURE3.jpg',
+                    'images/PICTURE3.jpg',
+                    './images/PICTURE3.jpg',
+                    'PICTURE3.jpg'
+                ];
+                
+                let currentIndex = 0;
+                function tryNextPath() {
+                    if (currentIndex < alternativePaths.length) {
+                        const path = alternativePaths[currentIndex];
+                        console.log('Trying path:', path);
+                        heroSection.style.backgroundImage = `url('${path}')`;
+                        currentIndex++;
+                        
+                        // Test if new path is valid
+                        const testImg = new Image();
+                        testImg.onload = function() {
+                            console.log('Found valid path:', path);
+                            heroSection.classList.remove('fallback-bg');
+                        };
+                        testImg.onerror = tryNextPath;
+                        testImg.src = path;
+                    }
+                }
+                
+                tryNextPath();
+            };
+            
+            bgImage.src = './images/PICTURE3.jpg';
+
+            // Registration form processing
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const email = document.getElementById('email').value;
+                const messageElement = document.getElementById('registerMessage');
+                
+                // Simple validation
+                if (username.length < 3) {
+                    showMessage('Username requires at least 3 characters', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    showMessage('Password requires at least 6 characters', 'error');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    showMessage('Passwords entered do not match', 'error');
+                    return;
+                }
+                
+                if (!isValidEmail(email)) {
+                    showMessage('Please enter a valid email address', 'error');
+                    return;
+                }
+                
+                // Simulate successful registration
+                showMessage('Registration successful! Welcome to our charity platform!', 'success');
+                
+                // Reset form
+                this.reset();
+            });
+            
+            function showMessage(message, type) {
+                const messageElement = document.getElementById('registerMessage');
+                messageElement.textContent = message;
+                messageElement.className = `register-message ${type}`;
+                messageElement.style.display = 'block';
+                
+                // Automatically hide success message after 3 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        messageElement.style.display = 'none';
+                    }, 3000);
+                }
+            }
+            
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+        });
+    </script>
+</body>
+</html>
